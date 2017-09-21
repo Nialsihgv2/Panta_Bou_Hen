@@ -5,29 +5,31 @@
 #define SCREEN_HEIGHT 621
 /* Size of the sprite; this is a square */
 #define SPRITE_SIZE   100
+/* NB of each piece with != shape */
 #define NB_PIECES     12
 
 int main(int argc, char* argv[])
 {
   SDL_Surface** sprite;
-    SDL_Surface *screen, *temp, *grass;
-    SDL_Rect spritePosition;
-    int colorkey, gameover;
-    int defsp = 0;
-    int defim = 0;
-
-    /* initialize video system */
-    SDL_Init(SDL_INIT_VIDEO);
-
-    /* set the title bar */
-    SDL_WM_SetCaption("Pentamino", "Pentamino");
-
-    /* create window */
-    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-
-    /* load sprite */
-    sprite = (SDL_Surface**)malloc(NB_PIECES*sizeof(SDL_Surface*));
+  SDL_Surface *screen, *temp, *bcgr;
+  SDL_Rect spritePosition;
+  int colorkey, gameover;
+  int defsp = 0;
+  int defim = 0;
+  
+  /* initialize video system */
+  SDL_Init(SDL_INIT_VIDEO);
+  
+  /* set the title bar */
+  SDL_WM_SetCaption("Pentamino", "Pentamino");
+  
+  /* create window */
+  screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+  
+  /* setup colorkey */
     colorkey = SDL_MapRGB(screen->format, 153, 153, 153);
+  /* load sprites */
+    sprite = (SDL_Surface**)malloc(NB_PIECES*sizeof(SDL_Surface*));
     for(int i=0;i<NB_PIECES;i++){
       switch(i){
       case 0:
@@ -71,12 +73,12 @@ int main(int argc, char* argv[])
       *(sprite + i) = SDL_DisplayFormat(temp);
       SDL_FreeSurface(temp);
 
-    /* setup sprite colorkey and turn on RLE */
+    /* turn on RLE */
       SDL_SetColorKey(*(sprite + i), SDL_SRCCOLORKEY | SDL_RLEACCEL, colorkey);}
 
-    /* load grass */
+    /* load background */
     temp  = SDL_LoadBMP("backgr.bmp");
-    grass = SDL_DisplayFormat(temp);
+    bcgr = SDL_DisplayFormat(temp);
     SDL_FreeSurface(temp);
 
     /* set sprite position */
@@ -133,23 +135,18 @@ int main(int argc, char* argv[])
             }
         }
 
-        /* handle sprite movement */
+        /* Draw the background */
+	SDL_BlitSurface(bcgr, NULL, screen, NULL);
 
-
-        /* collide with edges of screen */
-        if (spritePosition.y < 0) {
-            spritePosition.y = 0;
-        } else if (spritePosition.y > SCREEN_HEIGHT - SPRITE_SIZE) {
-            spritePosition.y = SCREEN_HEIGHT - SPRITE_SIZE;
-        }
-
-        /* map the grass texture on the whole background */
-	SDL_BlitSurface(grass, NULL, screen, NULL);
+	/* Dimension of one sprite */
 	SDL_Rect dimsprite;
-	dimsprite.x = defsp*100;
 	dimsprite.y = 0;
 	dimsprite.w = SPRITE_SIZE;
 	dimsprite.h = SPRITE_SIZE;
+	
+	/* Position on bmp of sprite to chosse the right one */
+	dimsprite.x = defsp*100;
+
         /* draw the sprite */
         SDL_BlitSurface(*(sprite + defim), &dimsprite, screen, &spritePosition);
 
@@ -161,7 +158,7 @@ int main(int argc, char* argv[])
     for(int i=0;i<NB_PIECES;i++){
       SDL_FreeSurface(*(sprite+i));}
     free(sprite);
-    SDL_FreeSurface(grass);
+    SDL_FreeSurface(bcgr);
     SDL_Quit();
 
     return 0;
