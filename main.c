@@ -1,4 +1,6 @@
 #include <SDL.h>
+#include <SDL/SDL_ttf.h>
+#include <string.h>
 
 /* Size of the window */
 #define SCREEN_WIDTH  938
@@ -11,7 +13,7 @@
 int main(int argc, char* argv[])
 {
   SDL_Surface** sprite;
-  SDL_Surface *screen, *temp, *bcgr;
+  SDL_Surface *screen, *temp, *bcgr, *text;
   SDL_Rect spritePosition;
   int colorkey, gameover;
   int defsp = 0;
@@ -71,11 +73,14 @@ int main(int argc, char* argv[])
       default:
 	break;}
       *(sprite + i) = SDL_DisplayFormat(temp);
-      SDL_FreeSurface(temp);
 
     /* turn on RLE */
       SDL_SetColorKey(*(sprite + i), SDL_SRCCOLORKEY | SDL_RLEACCEL, colorkey);}
 
+    colorkey = SDL_MapRGB(screen->format, 255, 0, 255);
+    temp = SDL_LoadBMP("text.bmp");
+    text = SDL_DisplayFormat(temp);
+    SDL_SetColorKey(text, SDL_SRCCOLORKEY | SDL_RLEACCEL, colorkey);
     /* load background */
     temp  = SDL_LoadBMP("backgr.bmp");
     bcgr = SDL_DisplayFormat(temp);
@@ -150,6 +155,21 @@ int main(int argc, char* argv[])
         /* draw the sprite */
         SDL_BlitSurface(*(sprite + defim), &dimsprite, screen, &spritePosition);
 
+	/* draw text */
+	char write[]="CECI EST UN TEXTE";
+	SDL_Rect dimtxt, txtPosition;
+	dimtxt.y = 0;
+	dimtxt.w = 40;
+	dimtxt.h = 65;
+	txtPosition.y = 0;
+	for(int i=0; i<strlen(write); i++){
+	  txtPosition.x = 100 + i * 40;
+	  if(write[i] != ' '){
+	    dimtxt.x = 40 * (write[i] - 'A');
+	    SDL_BlitSurface(text, &dimtxt, screen, &txtPosition);
+	  }
+	}
+	
         /* update the screen */
         SDL_UpdateRect(screen,0,0,0,0);
     }
@@ -158,6 +178,7 @@ int main(int argc, char* argv[])
     for(int i=0;i<NB_PIECES;i++){
       SDL_FreeSurface(*(sprite+i));}
     free(sprite);
+    SDL_FreeSurface(text);
     SDL_FreeSurface(bcgr);
     SDL_Quit();
 
