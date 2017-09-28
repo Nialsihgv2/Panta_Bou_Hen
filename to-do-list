@@ -1,15 +1,18 @@
 à faire:
--graphismes images/textes*
--inclusion des images/textes dans le programme*
--inclusion de grilles à taille variable*
+-inclusion de grilles à taille variable
 -inclusion d'un chronomètre
--inclusion de formes différentes (grille de jeu)
+-inclusion de formes différentes (grille de jeu)*
 -inclusion d'une musique de fond quand on joue ("tetris theme" par défaut, voir pour autre musique)
 -inclusion d'un écran titre*
 -inclusion d'un écran d'option*
 -inclusion d'une deuxième langue (anglais par défaut, ajout du français)
+-creer fichier(s) txt grille/pieces*
+-fichier.h fonctions, const, struct*
+-changement de police d'écriture
 
-fait: -Images des pièces en .bmp finit le 18/09 et upload sur temppier le 19/09. A en discuter Jeudi.
+fait:
 
 
 abandonné:
+-graphismes images/textes*
+-inclusion des images/textes dans le programme*
