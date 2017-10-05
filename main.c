@@ -2,6 +2,7 @@
 #include <SDL_ttf.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 #include "fonct.h"
 
 int main(int argc, char* argv[])
@@ -9,11 +10,13 @@ int main(int argc, char* argv[])
   SDL_Surface *screen, *temp, *bcgr, *texte;
   SDL_Rect position;
   int gameover;
-  time_t debut, progress;
-  int temps;
   char *t_str;
   TTF_Font *police;
   SDL_Color couleurNoire = {0, 0, 0};
+  piece_t* p_l;
+  p_l=(piece_t*)malloc(sizeof(piece_t));
+  init_piece(p_l);
+  p_l->flip = false;
 
   t_str=(char *)malloc(sizeof(char)*50);
   
@@ -21,7 +24,7 @@ int main(int argc, char* argv[])
   SDL_Init(SDL_INIT_VIDEO);
   
   /* set the title bar */
-  SDL_WM_SetCaption("Pentamino", "Pentamino");
+  SDL_WM_SetCaption("Pentomino", "Pentomino");
 
   TTF_Init();
 
@@ -38,13 +41,10 @@ int main(int argc, char* argv[])
   police = TTF_OpenFont("Colleged.ttf",65);
   
   gameover = 0;
-  debut = time(NULL);
   /* main loop: check events and re-draw the window until the end */
   while (!gameover)
     {
-      progress = time(NULL);
-      temps = difftime(progress, debut);
-      sprintf(t_str, "%d:%d", temps/60, temps%60);
+      sprintf(t_str, "Test chiant");
       texte = TTF_RenderText_Blended(police, t_str,
 				     couleurNoire);
 
@@ -85,6 +85,8 @@ int main(int argc, char* argv[])
     }
   
   /* clean up */
+  free_piece(p_l);
+  free(p_l);
   SDL_FreeSurface(bcgr);
   SDL_FreeSurface(texte);
   TTF_CloseFont(police);
