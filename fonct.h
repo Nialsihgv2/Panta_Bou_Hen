@@ -6,6 +6,8 @@
 /* Size of the window */
 #define SCREEN_WIDTH  938
 #define SCREEN_HEIGHT 621
+#define TIMER_POS_X 630
+#define TIMER_POS_Y 5
 
 
 typedef struct Piece piece_t;
