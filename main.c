@@ -111,12 +111,12 @@ int main(int argc, char* argv[])
       position.y = (621 - 63)/2;
       SDL_BlitSurface(title, NULL, screen, &position);
 
-      testt.w = 10;
-      testt.h = 10;
+      testt.w = 12;
+      testt.h = 12;
       for(int i=0;i<54;i++){
-	testt.y=10*i;
+	testt.y=12*i;
 	for(int j=0;j<11;j++){
-	  testt.x=10*j;
+	  testt.x=12*j;
 	  if(test[i][j]=='#'){
 	    SDL_FillRect(screen,&testt,i<7?SDL_MapRGB(screen->format,0,0,255):
 			 SDL_MapRGB(screen->format,0,255,0));}
