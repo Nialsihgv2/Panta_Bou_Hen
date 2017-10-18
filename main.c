@@ -25,10 +25,10 @@ int main(int argc, char* argv[])
 
   txt = fopen("pentomino.txt","r");
   test = (char**)malloc(54*sizeof(char*));
-  create_piece(txt,test);
   for(int i=0;i<54;i++){
-    printf("%s",test[i]);
+    test[i]=(char*)malloc(11*sizeof(char));
   }
+  create_piece(txt,test);
   p_l=(piece_t*)malloc(sizeof(piece_t));
   init_piece(p_l);
 
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   
   /* create window */
   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-  
+
   /* load background */
   temp  = SDL_LoadBMP("backgr.bmp");
   bcgr = SDL_DisplayFormatAlpha(temp);
@@ -110,8 +110,7 @@ int main(int argc, char* argv[])
       position.x = (938 - 63 * 9)/2;
       position.y = (621 - 63)/2;
       SDL_BlitSurface(title, NULL, screen, &position);
-      
-      /* update the screen */
+
       testt.w = 10;
       testt.h = 10;
       for(int i=0;i<54;i++){
@@ -119,11 +118,12 @@ int main(int argc, char* argv[])
 	for(int j=0;j<11;j++){
 	  testt.x=10*j;
 	  if(test[i][j]=='#'){
-	    SDL_FillRect(screen,&testt,SDL_MapRGB(screen->format,0,0,255));}
+	    SDL_FillRect(screen,&testt,i<7?SDL_MapRGB(screen->format,0,0,255):
+			 SDL_MapRGB(screen->format,0,255,0));}
 	}
       }
-      testt.x = 10;
-      testt.y = 10;
+      
+      /* update the screen */
       SDL_UpdateRect(screen,0,0,0,0);
       SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,0,0,0));
     }
