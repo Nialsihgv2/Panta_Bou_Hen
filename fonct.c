@@ -17,3 +17,10 @@ void free_piece(piece_t* p)
   }
   free(p->form);
 }
+
+void create_piece(FILE *txt, char **piece)
+{
+  for(int i=0;i<54;i++){
+    fgets(piece[i],12,txt);
+  }
+}
