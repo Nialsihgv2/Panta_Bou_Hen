@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   /* main loop: check events and re-draw the window until the end */
   start = time(NULL);
   in_time = time(NULL);
-  sprintf(t_str, "Pantomino");
+  sprintf(t_str, "Pentomino");
   title = TTF_RenderText_Blended(font_title, t_str, black);
   while (!gameover)
     {
