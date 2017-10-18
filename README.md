@@ -1,2 +1,2 @@
 # Panta_Bou_Hen
-Game of pantamino
+Game of pentomino
