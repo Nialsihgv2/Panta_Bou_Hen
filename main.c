@@ -10,7 +10,7 @@
 int main(int argc, char* argv[])
 {
   SDL_Surface *screen, *temp, *bcgr, *text, *title;
-  SDL_Rect position,testt;
+  SDL_Rect position,p_rect;
   int gameover;
   time_t start, in_time, t_temp;
   int t_int, min, sec;
@@ -111,14 +111,14 @@ int main(int argc, char* argv[])
       position.y = (621 - 63)/2;
       SDL_BlitSurface(title, NULL, screen, &position);
 
-      testt.w = 12;
-      testt.h = 12;
+      p_rect.w = 12;
+      p_rect.h = 12;
       for(int i=0;i<49;i++){
-	testt.y=12*i;
+	p_rect.y=12*i;
 	for(int j=0;j<11;j++){
-	  testt.x=12*j;
+	  p_rect.x=12*j;
 	  if(test[i][j]=='#'){
-	    SDL_FillRect(screen,&testt,i<7?SDL_MapRGB(screen->format,0,0,255):
+	    SDL_FillRect(screen,&p_rect,i<7?SDL_MapRGB(screen->format,0,0,255):
 			 SDL_MapRGB(screen->format,0,255,0));}
 	}
       }
