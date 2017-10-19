@@ -24,8 +24,8 @@ int main(int argc, char* argv[])
   char **test;
 
   txt = fopen("pentomino.txt","r");
-  test = (char**)malloc(54*sizeof(char*));
-  for(int i=0;i<54;i++){
+  test = (char**)malloc(49*sizeof(char*));
+  for(int i=0;i<49;i++){
     test[i]=(char*)malloc(11*sizeof(char));
   }
   create_piece(txt,test);
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 
       testt.w = 12;
       testt.h = 12;
-      for(int i=0;i<54;i++){
+      for(int i=0;i<49;i++){
 	testt.y=12*i;
 	for(int j=0;j<11;j++){
 	  testt.x=12*j;
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
   TTF_CloseFont(font_title);
   TTF_Quit();
   SDL_Quit();
-  for(int i=0;i<54;i++){
+  for(int i=0;i<49;i++){
     free(test[i]);
   }
   free(test);

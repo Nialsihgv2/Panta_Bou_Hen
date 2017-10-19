@@ -5,7 +5,6 @@ void init_piece(piece_t* p)
   p->form=(char**)malloc(5*sizeof(char*));
   for(int i=0;i<5;i++){
     p->form[i]=(char*)malloc(5*sizeof(char));
-    sprintf(p->form[i],"12345");
   }
   p->flip = false;
 }
@@ -20,7 +19,7 @@ void free_piece(piece_t* p)
 
 void create_piece(FILE *txt, char **piece)
 {
-  for(int i=0;i<54;i++){
+  for(int i=0;i<49;i++){
     fgets(piece[i],12,txt);
   }
 }
