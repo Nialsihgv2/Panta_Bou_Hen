@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 {
   SDL_Surface *screen, *temp, *bcgr, *text, *title;
   SDL_Rect position,p_rect;
-  int gameover;
+  int gameover, mod;
   time_t start, in_time, t_temp;
   int t_int, min, sec;
   char *t_str;
@@ -21,14 +21,14 @@ int main(int argc, char* argv[])
   SDL_Event event;
   Uint32 startT;
   FILE* txt = NULL;
-  char **test;
+  char **t_rect;
 
   txt = fopen("pentomino.txt","r");
-  test = (char**)malloc(49*sizeof(char*));
+  t_rect = (char**)malloc(49*sizeof(char*));
   for(int i=0;i<49;i++){
-    test[i]=(char*)malloc(11*sizeof(char));
+    t_rect[i]=(char*)malloc(11*sizeof(char));
   }
-  create_piece(txt,test);
+  create_piece(txt,t_rect);
   p_l=(piece_t*)malloc(sizeof(piece_t));
   init_piece(p_l);
 
@@ -59,30 +59,15 @@ int main(int argc, char* argv[])
   in_time = time(NULL);
   sprintf(t_str, "Pentomino");
   title = TTF_RenderText_Blended(font_title, t_str, black);
+  mod = DEBUG_MOD;
   while (!gameover)
     {
-      startT = SDL_GetTicks();
-      if(SDL_GetTicks()-startT < 1000/60){
-	SDL_Delay((1000/60)-(SDL_GetTicks()-startT));
-      }
-      t_temp = time(NULL);
-      if(t_temp!=in_time){
-	t_int = difftime(in_time, start);
-	min = (t_int / 60) % 100;
-	sec = t_int % 60;
-	sprintf(t_str, "%d%d:%d%d",min/10,min%10,sec/10,sec%10);
-	text = TTF_RenderText_Blended(font_timer, t_str,
-				      black);
-	in_time = time(NULL);
-      }
-
-      
       /* look for an event */
       if (SDL_PollEvent(&event)) {
-      	/* an event was found */
-      	switch (event.type) {
-      	  /* close button clicked */
-      	case SDL_QUIT:
+	/* an event was found */
+	switch (event.type) {
+	  /* close button clicked */
+	case SDL_QUIT:
 	  gameover = 1;
 	  break;
 	  
@@ -93,39 +78,60 @@ int main(int argc, char* argv[])
 	  case SDLK_q:
 	    gameover = 1;
 	    break;
+	  case SDLK_p:
+	    mod = (mod + 1) %2;
+	    break;
 	  default:
 	    break;
 	  }
 	  break;
 	}
       }
-      
       /* Draw the background */
       SDL_BlitSurface(bcgr, NULL, screen, NULL);
       
-      position.x = 938 - 31 * 5;
-      position.y = 5;
-      SDL_BlitSurface(text, NULL, screen, &position);
-
-      position.x = (938 - 63 * 9)/2;
-      position.y = (621 - 63)/2;
-      SDL_BlitSurface(title, NULL, screen, &position);
-
-      p_rect.w = 12;
-      p_rect.h = 12;
-      for(int i=0;i<49;i++){
-	p_rect.y=12*i;
-	for(int j=0;j<11;j++){
-	  p_rect.x=12*j;
-	  if(test[i][j]=='#'){
-	    SDL_FillRect(screen,&p_rect,i<7?SDL_MapRGB(screen->format,0,0,255):
-			 SDL_MapRGB(screen->format,0,255,0));}
+      if(mod==1){
+	startT = SDL_GetTicks();
+	if(SDL_GetTicks()-startT < 1000/60){
+	  SDL_Delay((1000/60)-(SDL_GetTicks()-startT));
 	}
+	t_temp = time(NULL);
+	if(t_temp!=in_time){
+	  t_int = difftime(in_time, start);
+	  min = (t_int / 60) % 100;
+	  sec = t_int % 60;
+	  sprintf(t_str, "%d%d:%d%d",min/10,min%10,sec/10,sec%10);
+	  text = TTF_RenderText_Blended(font_timer, t_str,
+					black);
+	  in_time = time(NULL);
+	}
+	
+	
+	
+	
+	position.x = 938 - 31 * 5;
+	position.y = 5;
+	SDL_BlitSurface(text, NULL, screen, &position);
+	
+	position.x = (938 - 63 * 9)/2;
+	position.y = (621 - 63)/2;
+	SDL_BlitSurface(title, NULL, screen, &position);
+	
+	p_rect.w = 12;
+	p_rect.h = 12;
+	for(int i=0;i<49;i++){
+	  p_rect.y=12*i;
+	  for(int j=0;j<11;j++){
+	    p_rect.x=12*j;
+	    if(t_rect[i][j]=='#'){
+	      SDL_FillRect(screen,&p_rect,i<7?SDL_MapRGB(screen->format,0,0,255)
+			   :SDL_MapRGB(screen->format,0,255,0));}
+	  }
+	}
+	
       }
-      
       /* update the screen */
-      SDL_UpdateRect(screen,0,0,0,0);
-      SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,0,0,0));
+      SDL_UpdateRect(screen,0,0,0,0);	
     }
   
   /* clean up */
@@ -141,9 +147,9 @@ int main(int argc, char* argv[])
   TTF_Quit();
   SDL_Quit();
   for(int i=0;i<49;i++){
-    free(test[i]);
+    free(t_rect[i]);
   }
-  free(test);
+  free(t_rect);
   fclose(txt);
   
   return 0;
