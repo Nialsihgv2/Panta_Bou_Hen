@@ -7,6 +7,8 @@
 -inclusion d'une deuxième langue (anglais par défaut, ajout du français)
 -ajout d'astuce par pression touche (h)
 -pivot des pieces
+-fonctions souris*
+-ameliorer struct pieces*
 
 fait:
 -fichier.h fonctions, const, struct*
