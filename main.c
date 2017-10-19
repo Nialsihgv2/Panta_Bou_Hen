@@ -1,0 +1,156 @@
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <stdbool.h>
+#include "fonct.h"
+
+int main(int argc, char* argv[])
+{
+  SDL_Surface *screen, *temp, *bcgr, *text, *title;
+  SDL_Rect position,p_rect;
+  int gameover, mod;
+  time_t start, in_time, t_temp;
+  int t_int, min, sec;
+  char *t_str;
+  TTF_Font *font_timer, *font_title;
+  SDL_Color black = {0, 0, 0};
+  piece_t* p_l;
+  SDL_Event event;
+  Uint32 startT;
+  FILE* txt = NULL;
+  char **t_rect;
+
+  txt = fopen("pentomino.txt","r");
+  t_rect = (char**)malloc(49*sizeof(char*));
+  for(int i=0;i<49;i++){
+    t_rect[i]=(char*)malloc(11*sizeof(char));
+  }
+  create_piece(txt,t_rect);
+  p_l=(piece_t*)malloc(sizeof(piece_t));
+  init_piece(p_l);
+
+  t_str=(char *)malloc(sizeof(char)*50);
+  
+  /* initialize video system */
+  SDL_Init(SDL_INIT_VIDEO);
+  
+  /* set the title bar */
+  SDL_WM_SetCaption("Pentomino", "Pentomino");
+
+  TTF_Init();
+  
+  /* create window */
+  screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+
+  /* load background */
+  temp  = SDL_LoadBMP("backgr.bmp");
+  bcgr = SDL_DisplayFormatAlpha(temp);
+  SDL_FreeSurface(temp);
+  
+  font_timer = TTF_OpenFont("BlockoBit.ttf",32);
+  font_title = TTF_OpenFont("BlockoBit.ttf",64);
+  
+  gameover = 0;
+  /* main loop: check events and re-draw the window until the end */
+  start = time(NULL);
+  in_time = time(NULL);
+  sprintf(t_str, "Pentomino");
+  title = TTF_RenderText_Blended(font_title, t_str, black);
+  mod = DEBUG_MOD;
+  while (!gameover)
+    {
+      /* look for an event */
+      if (SDL_PollEvent(&event)) {
+	/* an event was found */
+	switch (event.type) {
+	  /* close button clicked */
+	case SDL_QUIT:
+	  gameover = 1;
+	  break;
+	  
+	  /* handle the keyboard */
+	case SDL_KEYDOWN:
+	  switch (event.key.keysym.sym) {
+	  case SDLK_ESCAPE:
+	  case SDLK_q:
+	    gameover = 1;
+	    break;
+	  case SDLK_p:
+	    mod = (mod + 1) %2;
+	    break;
+	  default:
+	    break;
+	  }
+	  break;
+	}
+      }
+      /* Draw the background */
+      SDL_BlitSurface(bcgr, NULL, screen, NULL);
+      
+      if(mod==1){
+	startT = SDL_GetTicks();
+	if(SDL_GetTicks()-startT < 1000/60){
+	  SDL_Delay((1000/60)-(SDL_GetTicks()-startT));
+	}
+	t_temp = time(NULL);
+	if(t_temp!=in_time){
+	  t_int = difftime(in_time, start);
+	  min = (t_int / 60) % 100;
+	  sec = t_int % 60;
+	  sprintf(t_str, "%d%d:%d%d",min/10,min%10,sec/10,sec%10);
+	  text = TTF_RenderText_Blended(font_timer, t_str,
+					black);
+	  in_time = time(NULL);
+	}
+	
+	
+	
+	
+	position.x = 938 - 31 * 5;
+	position.y = 5;
+	SDL_BlitSurface(text, NULL, screen, &position);
+	
+	position.x = (938 - 63 * 9)/2;
+	position.y = (621 - 63)/2;
+	SDL_BlitSurface(title, NULL, screen, &position);
+	
+	p_rect.w = 12;
+	p_rect.h = 12;
+	for(int i=0;i<49;i++){
+	  p_rect.y=12*i;
+	  for(int j=0;j<11;j++){
+	    p_rect.x=12*j;
+	    if(t_rect[i][j]=='#'){
+	      SDL_FillRect(screen,&p_rect,i<7?SDL_MapRGB(screen->format,0,0,255)
+			   :SDL_MapRGB(screen->format,0,255,0));}
+	  }
+	}
+	
+      }
+      /* update the screen */
+      SDL_UpdateRect(screen,0,0,0,0);	
+    }
+  
+  /* clean up */
+  free_piece(p_l);
+  free(p_l);
+  free(t_str);
+  SDL_FreeSurface(bcgr);
+  SDL_FreeSurface(text);
+  SDL_FreeSurface(title);
+  SDL_FreeSurface(screen);
+  TTF_CloseFont(font_timer);
+  TTF_CloseFont(font_title);
+  TTF_Quit();
+  SDL_Quit();
+  for(int i=0;i<49;i++){
+    free(t_rect[i]);
+  }
+  free(t_rect);
+  fclose(txt);
+  
+  return 0;
+}
