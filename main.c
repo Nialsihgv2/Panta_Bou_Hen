@@ -106,8 +106,8 @@ int main(int argc, char* argv[])
   title = TTF_RenderText_Blended(font_title, t_str, black);
   mod = DEBUG_MOD;
   mouse_state = 0;
-  position.x = (938 - 64 * 8.4)/2;
-  position.y = (621 - 64)/2;
+  position.x = 200;
+  position.y = 278;
 
   while (!gameover)
     {
@@ -163,8 +163,8 @@ int main(int argc, char* argv[])
 	  }
 	}
 	if(mouse_state){
-	  position.x = in.mousex - (64*8.4)/2;
-	  position.y = in.mousey - (64/2);
+	  position.x = in.mousex - 268;
+	  position.y = in.mousey - 30;
 	}
 	SDL_BlitSurface(title, NULL, screen, &position);
 	
