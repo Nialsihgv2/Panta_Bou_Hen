@@ -7,66 +7,21 @@
 #include <stdbool.h>
 #include "fonct.h"
 
-typedef struct Event event_t;
-
-struct Event
-{
-  char key[SDLK_LAST];
-  int mousex,mousey;
-  int mousexrel,mouseyrel;
-  char mousebuttons[8];
-  char quit;
-};
-
-void UpdateEvents(event_t* in)
-{
-  SDL_Event event;
-  while(SDL_PollEvent(&event)){
-    switch (event.type){
-    case SDL_KEYDOWN:
-      in->key[event.key.keysym.sym]=1;
-      break;
-    case SDL_KEYUP:
-      in->key[event.key.keysym.sym]=0;
-      break;
-    case SDL_MOUSEMOTION:
-      in->mousex=event.motion.x;
-      in->mousey=event.motion.y;
-      in->mousexrel=event.motion.xrel;
-      in->mouseyrel=event.motion.yrel;
-      break;
-    case SDL_MOUSEBUTTONDOWN:
-      in->mousebuttons[event.button.button]=1;
-      break;
-    case SDL_MOUSEBUTTONUP:
-      in->mousebuttons[event.button.button]=0;
-      break;
-    case SDL_QUIT:
-      in->quit=1;
-      break;
-    default:
-      break;
-    }
-  }
-}
-
 int main(int argc, char* argv[])
 {
   SDL_Surface *screen, *temp, *bcgr, *text, *title;
-  SDL_Rect position,p_chrono,p_rect;
-  int gameover, mod, mouse_state;
+  SDL_Rect position,p_rect;
+  int gameover, mod;
   time_t start, in_time, t_temp;
   int t_int, min, sec;
   char *t_str;
   TTF_Font *font_timer, *font_title;
   SDL_Color black = {0, 0, 0};
   piece_t* p_l;
+  SDL_Event event;
   Uint32 startT;
   FILE* txt = NULL;
   char **t_rect;
-  event_t in;
-
-  memset(&in,0,sizeof(in));
 
   txt = fopen("pentomino.txt","r");
   t_rect = (char**)malloc(49*sizeof(char*));
@@ -105,29 +60,34 @@ int main(int argc, char* argv[])
   sprintf(t_str, "Pentomino");
   title = TTF_RenderText_Blended(font_title, t_str, black);
   mod = DEBUG_MOD;
-  mouse_state = 0;
-  position.x = (938 - 64 * 8.4)/2;
-  position.y = (621 - 64)/2;
-
   while (!gameover)
     {
-      UpdateEvents(&in);
-      if(in.mousebuttons[SDL_BUTTON_LEFT] && mod==1){
-	in.mousebuttons[SDL_BUTTON_LEFT] = 0;
-	mouse_state = (mouse_state + 1) % 2;
-      }
-      if(in.key[SDLK_ESCAPE] || in.quit){
-	gameover=1;
-      }
-      if(in.key[SDLK_p]){
-	in.key[SDLK_p]=0;
-	mod = (mod + 1)%2;
-      }
-      if(mod!=1){
-	mouse_state = 0;
+      /* look for an event */
+      if (SDL_PollEvent(&event)) {
+	/* an event was found */
+	switch (event.type) {
+	  /* close button clicked */
+	case SDL_QUIT:
+	  gameover = 1;
+	  break;
+	  
+	  /* handle the keyboard */
+	case SDL_KEYDOWN:
+	  switch (event.key.keysym.sym) {
+	  case SDLK_ESCAPE:
+	  case SDLK_q:
+	    gameover = 1;
+	    break;
+	  case SDLK_p:
+	    mod = (mod + 1) %2;
+	    break;
+	  default:
+	    break;
+	  }
+	  break;
+	}
       }
       /* Draw the background */
-
       SDL_BlitSurface(bcgr, NULL, screen, NULL);
       
       if(mod==1){
@@ -146,10 +106,16 @@ int main(int argc, char* argv[])
 	  in_time = time(NULL);
 	}
 	
-	p_chrono.x = 938 - 31 * 5;
-	p_chrono.y = 5;
-	SDL_BlitSurface(text, NULL, screen, &p_chrono);
 	
+	
+	
+	position.x = 938 - 31 * 5;
+	position.y = 5;
+	SDL_BlitSurface(text, NULL, screen, &position);
+	
+	position.x = (938 - 63 * 9)/2;
+	position.y = (621 - 63)/2;
+	SDL_BlitSurface(title, NULL, screen, &position);
 	
 	p_rect.w = 12;
 	p_rect.h = 12;
@@ -162,11 +128,6 @@ int main(int argc, char* argv[])
 			   :SDL_MapRGB(screen->format,0,255,0));}
 	  }
 	}
-	if(mouse_state){
-	  position.x = in.mousex - (64*8.4)/2;
-	  position.y = in.mousey - (64/2);
-	}
-	SDL_BlitSurface(title, NULL, screen, &position);
 	
       }
       /* update the screen */
