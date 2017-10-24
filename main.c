@@ -53,8 +53,8 @@ void UpdateEvents(event_t* in)
 int main(int argc, char* argv[])
 {
   SDL_Surface *screen, *temp, *bcgr, *text, *title;
-  SDL_Rect position,p_rect;
-  int gameover, mod;
+  SDL_Rect position,p_chrono,p_rect;
+  int gameover, mod, mouse_state;
   time_t start, in_time, t_temp;
   int t_int, min, sec;
   char *t_str;
@@ -105,11 +105,16 @@ int main(int argc, char* argv[])
   sprintf(t_str, "Pentomino");
   title = TTF_RenderText_Blended(font_title, t_str, black);
   mod = DEBUG_MOD;
+  mouse_state = 0;
+  position.x = (938 - 63 * 9)/2;
+  position.y = (621 - 63)/2;
+
   while (!gameover)
     {
       UpdateEvents(&in);
       if(in.mousebuttons[SDL_BUTTON_LEFT]){
 	in.mousebuttons[SDL_BUTTON_LEFT] = 0;
+	mouse_state = (mouse_state + 1) % 2;
       }
       if(in.key[SDLK_ESCAPE] || in.quit){
 	gameover=1;
@@ -138,13 +143,10 @@ int main(int argc, char* argv[])
 	  in_time = time(NULL);
 	}
 	
-	position.x = 938 - 31 * 5;
-	position.y = 5;
-	SDL_BlitSurface(text, NULL, screen, &position);
+	p_chrono.x = 938 - 31 * 5;
+	p_chrono.y = 5;
+	SDL_BlitSurface(text, NULL, screen, &p_chrono);
 	
-	position.x = (938 - 63 * 9)/2;
-	position.y = (621 - 63)/2;
-	SDL_BlitSurface(title, NULL, screen, &position);
 	
 	p_rect.w = 12;
 	p_rect.h = 12;
@@ -157,6 +159,11 @@ int main(int argc, char* argv[])
 			   :SDL_MapRGB(screen->format,0,255,0));}
 	  }
 	}
+	if(mouse_state){
+	  position.x = in.mousex;
+	  position.y = in.mousey;
+	}
+	SDL_BlitSurface(title, NULL, screen, &position);
 	
       }
       /* update the screen */
