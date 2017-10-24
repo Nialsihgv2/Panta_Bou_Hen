@@ -106,13 +106,13 @@ int main(int argc, char* argv[])
   title = TTF_RenderText_Blended(font_title, t_str, black);
   mod = DEBUG_MOD;
   mouse_state = 0;
-  position.x = (938 - 63 * 9)/2;
-  position.y = (621 - 63)/2;
+  position.x = (938 - 64 * 8.4)/2;
+  position.y = (621 - 64)/2;
 
   while (!gameover)
     {
       UpdateEvents(&in);
-      if(in.mousebuttons[SDL_BUTTON_LEFT]){
+      if(in.mousebuttons[SDL_BUTTON_LEFT] && mod==1){
 	in.mousebuttons[SDL_BUTTON_LEFT] = 0;
 	mouse_state = (mouse_state + 1) % 2;
       }
@@ -122,6 +122,9 @@ int main(int argc, char* argv[])
       if(in.key[SDLK_p]){
 	in.key[SDLK_p]=0;
 	mod = (mod + 1)%2;
+      }
+      if(mod!=1){
+	mouse_state = 0;
       }
       /* Draw the background */
 
@@ -160,8 +163,8 @@ int main(int argc, char* argv[])
 	  }
 	}
 	if(mouse_state){
-	  position.x = in.mousex;
-	  position.y = in.mousey;
+	  position.x = in.mousex - (64*8.4)/2;
+	  position.y = in.mousey - (64/2);
 	}
 	SDL_BlitSurface(title, NULL, screen, &position);
 	
