@@ -7,9 +7,9 @@
 #include <stdbool.h>
 #include "fonct.h"
 
-typedef struct Event event_t;
+typedef struct Input input_t;
 
-struct Event
+struct Input
 {
   char key[SDLK_LAST];
   int mousex,mousey;
@@ -18,7 +18,7 @@ struct Event
   char quit;
 };
 
-void UpdateEvents(event_t* in)
+void UpdateEvents(input_t* in)
 {
   SDL_Event event;
   while(SDL_PollEvent(&event)){
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   Uint32 startT;
   FILE* txt = NULL;
   char **t_rect;
-  event_t in;
+  input_t in;
 
   memset(&in,0,sizeof(in));
 
