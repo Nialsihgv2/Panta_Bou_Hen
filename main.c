@@ -7,6 +7,49 @@
 #include <stdbool.h>
 #include "fonct.h"
 
+typedef struct Event event_t;
+
+struct Event
+{
+  char key[SDLK_LAST];
+  int mousex,mousey;
+  int mousexrel,mouseyrel;
+  char mousebuttons[8];
+  char quit;
+};
+
+void UpdateEvents(event_t* in)
+{
+  SDL_Event event;
+  while(SDL_PollEvent(&event)){
+    switch (event.type){
+    case SDL_KEYDOWN:
+      in->key[event.key.keysym.sym]=1;
+      break;
+    case SDL_KEYUP:
+      in->key[event.key.keysym.sym]=0;
+      break;
+    case SDL_MOUSEMOTION:
+      in->mousex=event.motion.x;
+      in->mousey=event.motion.y;
+      in->mousexrel=event.motion.xrel;
+      in->mouseyrel=event.motion.yrel;
+      break;
+    case SDL_MOUSEBUTTONDOWN:
+      in->mousebuttons[event.button.button]=1;
+      break;
+    case SDL_MOUSEBUTTONUP:
+      in->mousebuttons[event.button.button]=0;
+      break;
+    case SDL_QUIT:
+      in->quit=1;
+      break;
+    default:
+      break;
+    }
+  }
+}
+
 int main(int argc, char* argv[])
 {
   SDL_Surface *screen, *temp, *bcgr, *text, *title;
@@ -18,10 +61,12 @@ int main(int argc, char* argv[])
   TTF_Font *font_timer, *font_title;
   SDL_Color black = {0, 0, 0};
   piece_t* p_l;
-  SDL_Event event;
   Uint32 startT;
   FILE* txt = NULL;
   char **t_rect;
+  event_t in;
+
+  memset(&in,0,sizeof(in));
 
   txt = fopen("pentomino.txt","r");
   t_rect = (char**)malloc(49*sizeof(char*));
@@ -62,32 +107,19 @@ int main(int argc, char* argv[])
   mod = DEBUG_MOD;
   while (!gameover)
     {
-      /* look for an event */
-      if (SDL_PollEvent(&event)) {
-	/* an event was found */
-	switch (event.type) {
-	  /* close button clicked */
-	case SDL_QUIT:
-	  gameover = 1;
-	  break;
-	  
-	  /* handle the keyboard */
-	case SDL_KEYDOWN:
-	  switch (event.key.keysym.sym) {
-	  case SDLK_ESCAPE:
-	  case SDLK_q:
-	    gameover = 1;
-	    break;
-	  case SDLK_p:
-	    mod = (mod + 1) %2;
-	    break;
-	  default:
-	    break;
-	  }
-	  break;
-	}
+      UpdateEvents(&in);
+      if(in.mousebuttons[SDL_BUTTON_LEFT]){
+	in.mousebuttons[SDL_BUTTON_LEFT] = 0;
+      }
+      if(in.key[SDLK_ESCAPE] || in.quit){
+	gameover=1;
+      }
+      if(in.key[SDLK_p]){
+	in.key[SDLK_p]=0;
+	mod = (mod + 1)%2;
       }
       /* Draw the background */
+
       SDL_BlitSurface(bcgr, NULL, screen, NULL);
       
       if(mod==1){
@@ -105,9 +137,6 @@ int main(int argc, char* argv[])
 					black);
 	  in_time = time(NULL);
 	}
-	
-	
-	
 	
 	position.x = 938 - 31 * 5;
 	position.y = 5;
