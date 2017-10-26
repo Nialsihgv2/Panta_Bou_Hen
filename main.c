@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
   in_time = time(NULL);
   sprintf(t_str, "Pentomino");
   title = TTF_RenderText_Blended(font_title, t_str, black);
-  mod = DEBUG_MOD;
+  mod = 1;
   mouse_state = 0;
   position.x = 200;
   position.y = 278;
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
       if(in.key[SDLK_ESCAPE] || in.quit){
 	gameover=1;
       }
-      if(in.key[SDLK_p]){
+      if(in.key[SDLK_p] && DEBUG_MOD){
 	in.key[SDLK_p]=0;
 	mod = (mod + 1)%2;
       }

@@ -14,13 +14,21 @@
 
 
 typedef struct Piece piece_t;
+typedef struct Grill grill_t;
+typedef struct Input input_t;
 
-struct Piece{
-  char** form;
-  bool flip;
+struct Piece
+{
+  int posx, posy;
+  char** shape;
 };
 
-typedef struct Input input_t;
+struct Grill
+{
+  int startx,startyy;
+  int len,hei;
+  char ** shape;
+};
 
 struct Input
 {
@@ -30,6 +38,7 @@ struct Input
   char mousebuttons[8];
   char quit;
 };
+
 
 void init_piece(piece_t* p);
 

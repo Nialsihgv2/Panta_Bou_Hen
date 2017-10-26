@@ -2,19 +2,18 @@
 
 void init_piece(piece_t* p)
 {
-  p->form=(char**)malloc(5*sizeof(char*));
+  p->shape=(char**)malloc(5*sizeof(char*));
   for(int i=0;i<5;i++){
-    p->form[i]=(char*)malloc(5*sizeof(char));
+    p->shape[i]=(char*)malloc(5*sizeof(char));
   }
-  p->flip = false;
 }
 
 void free_piece(piece_t* p)
 {
   for(int i=0;i<5;i++){
-    free(p->form[i]);
+    free(p->shape[i]);
   }
-  free(p->form);
+  free(p->shape);
 }
 
 void create_piece(FILE *txt, char **piece)
