@@ -26,10 +26,10 @@ int main(int argc, char* argv[])
 
   memset(&in,0,sizeof(in));
 
-  txt = fopen("pentomino.txt","r");
-  t_rect = (char**)malloc(49*sizeof(char*));
-  for(int i=0;i<49;i++){
-    t_rect[i]=(char*)malloc(11*sizeof(char));
+  txt = fopen("airplane.txt","r");
+  t_rect = (char**)malloc(82*sizeof(char*));
+  for(int i=0;i<82;i++){
+    t_rect[i]=(char*)malloc(16*sizeof(char));
   }
   create_piece(txt,t_rect);
   p_l=(piece_t*)malloc(sizeof(piece_t));
@@ -62,15 +62,15 @@ int main(int argc, char* argv[])
   in_time = time(NULL);
   sprintf(t_str, "Pentomino");
   title = TTF_RenderText_Blended(font_title, t_str, black);
-  mod = 1;
+  mod = 0;
   mouse_state = 0;
   position.x = 200;
-  position.y = 278;
+  position.y = 157;
 
   while (!gameover)
     {
       UpdateEvents(&in);
-      if(in.mousebuttons[SDL_BUTTON_LEFT] && mod==1){
+      if(in.mousebuttons[SDL_BUTTON_LEFT] && mod==0){
 	in.mousebuttons[SDL_BUTTON_LEFT] = 0;
 	mouse_state = (mouse_state + 1) % 2;
       }
@@ -81,56 +81,60 @@ int main(int argc, char* argv[])
 	in.key[SDLK_p]=0;
 	mod = (mod + 1)%2;
       }
-      if(mod!=1){
+      if(mod!=0){
 	mouse_state = 0;
       }
       /* Draw the background */
 
       SDL_BlitSurface(bcgr, NULL, screen, NULL);
-      
-      if(mod==1){
-	startT = SDL_GetTicks();
-	if(SDL_GetTicks()-startT < 1000/60){
-	  SDL_Delay((1000/60)-(SDL_GetTicks()-startT));
-	}
-	t_temp = time(NULL);
-	if(t_temp!=in_time){
-	  t_int = difftime(in_time, start);
-	  min = (t_int / 60) % 100;
-	  sec = t_int % 60;
-	  sprintf(t_str, "%d%d:%d%d",min/10,min%10,sec/10,sec%10);
-	  text = TTF_RenderText_Blended(font_timer, t_str,
-					black);
-	  in_time = time(NULL);
-	}
-	
-	p_chrono.x = 938 - 31 * 5;
-	p_chrono.y = 5;
-	SDL_BlitSurface(text, NULL, screen, &p_chrono);
-	
-	
-	p_rect.w = 12;
-	p_rect.h = 12;
-	for(int i=0;i<49;i++){
-	  p_rect.y=12*i;
-	  for(int j=0;j<11;j++){
-	    p_rect.x=12*j;
-	    if(t_rect[i][j]=='#'){
-	      SDL_FillRect(screen,&p_rect,i<7?SDL_MapRGB(screen->format,0,0,255)
-			   :SDL_MapRGB(screen->format,0,255,0));}
+      switch(mod){
+      case 1:
+	if(mod==1){
+	  startT = SDL_GetTicks();
+	  if(SDL_GetTicks()-startT < 1000/60){
+	    SDL_Delay((1000/60)-(SDL_GetTicks()-startT));
 	  }
+	  t_temp = time(NULL);
+	  if(t_temp!=in_time){
+	    t_int = difftime(in_time, start);
+	    min = (t_int / 60) % 100;
+	    sec = t_int % 60;
+	    sprintf(t_str, "%d%d:%d%d",min/10,min%10,sec/10,sec%10);
+	    text = TTF_RenderText_Blended(font_timer, t_str,
+					  black);
+	    in_time = time(NULL);
+	  }
+	  
+	  p_chrono.x = 938 - 31 * 5;
+	  p_chrono.y = 5;
+	  SDL_BlitSurface(text, NULL, screen, &p_chrono);
+	  
+	  
+	  p_rect.w = 20;
+	  p_rect.h = 20;
+	  for(int i=0;i<82;i++){
+	    p_rect.y=20*i;
+	    for(int j=0;j<16;j++){
+	      p_rect.x=20*j;
+	      if(t_rect[i][j]=='1'){
+		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,0,0,255));
+	      }
+	    }
+	  }
+	  
 	}
+	break;
+      default:
 	if(mouse_state){
 	  position.x = in.mousex - 268;
 	  position.y = in.mousey - 30;
 	}
 	SDL_BlitSurface(title, NULL, screen, &position);
-	
+	break;
       }
-      /* update the screen */
-      SDL_UpdateRect(screen,0,0,0,0);	
+	/* update the screen */
+	SDL_UpdateRect(screen,0,0,0,0);	
     }
-  
   /* clean up */
   free_piece(p_l);
   free(p_l);
@@ -143,7 +147,7 @@ int main(int argc, char* argv[])
   TTF_CloseFont(font_title);
   TTF_Quit();
   SDL_Quit();
-  for(int i=0;i<49;i++){
+  for(int i=0;i<82;i++){
     free(t_rect[i]);
   }
   free(t_rect);

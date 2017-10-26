@@ -19,8 +19,8 @@ void free_piece(piece_t* p)
 void create_piece(FILE *txt, char **piece)
 {
   char * temp;
-  for(int i=0;i<49;i++){
-    temp = fgets(piece[i],12,txt);
+  for(int i=0;i<82;i++){
+    temp = fgets(piece[i],17,txt);
   }
   free(temp);
 }

@@ -20,14 +20,16 @@ typedef struct Input input_t;
 struct Piece
 {
   int posx, posy;
+  char name;
   char** shape;
 };
 
 struct Grill
 {
-  int startx,startyy;
+  int TLx,TLy;
   int len,hei;
   char ** shape;
+  int ** val;
 };
 
 struct Input
