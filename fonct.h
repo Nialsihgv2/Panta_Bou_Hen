@@ -20,8 +20,21 @@ struct Piece{
   bool flip;
 };
 
+typedef struct Input input_t;
+
+struct Input
+{
+  char key[SDLK_LAST];
+  int mousex,mousey;
+  int mousexrel,mouseyrel;
+  char mousebuttons[8];
+  char quit;
+};
+
 void init_piece(piece_t* p);
 
 void free_piece(piece_t* p);
 
 void create_piece(FILE *txt, char **piece);
+
+void UpdateEvents(input_t* in);
