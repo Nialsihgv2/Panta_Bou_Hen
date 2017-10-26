@@ -1,14 +1,10 @@
 à faire:
 -inclusion de grilles à taille variable
 -inclusion de formes différentes (grille de jeu)*
--inclusion d'une musique de fond quand on joue ("tetris theme" par défaut, voir pour autre musique)
 -inclusion d'un écran titre*
 -inclusion d'un écran d'option*
 -inclusion d'une deuxième langue (anglais par défaut, ajout du français)
 -ajout d'astuce par pression touche (h)
--pivot des pieces
--fonctions souris*
--ameliorer struct pieces*
 
 fait:
 -fichier.h fonctions, const, struct*
@@ -17,7 +13,13 @@ fait:
 -creer fichier(s) txt grille/pieces*
 -changement de police d'écriture
 -debug mod
+-fonctions souris*
+
+en cours:
+-ameliorer struct pieces*
 
 abandonné:
 (-graphismes images/textes)
 (-inclusion des images dans le programme)
+-pivot des pieces
+-inclusion d'une musique de fond quand on joue ("tetris theme" par défaut, voir pour autre musique)
