@@ -14,14 +14,38 @@
 
 
 typedef struct Piece piece_t;
+typedef struct Grill grill_t;
+typedef struct Input input_t;
 
-struct Piece{
-  char** form;
-  bool flip;
+struct Piece
+{
+  int posx, posy;
+  char name;
+  char** shape;
 };
+
+struct Grill
+{
+  int TLx,TLy;
+  int len,hei;
+  char ** shape;
+  int ** val;
+};
+
+struct Input
+{
+  char key[SDLK_LAST];
+  int mousex,mousey;
+  int mousexrel,mouseyrel;
+  char mousebuttons[8];
+  char quit;
+};
+
 
 void init_piece(piece_t* p);
 
 void free_piece(piece_t* p);
 
 void create_piece(FILE *txt, char **piece);
+
+void UpdateEvents(input_t* in);

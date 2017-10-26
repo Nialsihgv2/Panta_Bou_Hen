@@ -1,5 +1,5 @@
 SRC=main.c
-BIN=main
+BIN=pentomino
 FNC=fonct
 
 $(BIN): $(FNC).o $(SRC)
