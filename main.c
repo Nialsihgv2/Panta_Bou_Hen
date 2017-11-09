@@ -12,28 +12,24 @@ int main(int argc, char* argv[])
 {
   SDL_Surface *screen, *temp, *bcgr, *text, *title;
   SDL_Rect position,p_chrono,p_rect;
-  int gameover, mod, mouse_state;
+  int gameover, mod, mouse_state, chgt_st = 0;
   time_t start, in_time, t_temp;
   int t_int, min, sec;
   char *t_str;
   TTF_Font *font_timer, *font_title;
   SDL_Color black = {0, 0, 0};
-  piece_t* p_l;
+  piece_t *p_l;
   Uint32 startT;
   FILE* txt = NULL;
-  char **t_rect;
+  //char **t_rect;
   input_t in;
+  grill_t form;
 
   memset(&in,0,sizeof(in));
 
   txt = fopen("airplane.txt","r");
-  t_rect = (char**)malloc(82*sizeof(char*));
-  for(int i=0;i<82;i++){
-    t_rect[i]=(char*)malloc(16*sizeof(char));
-  }
-  create_piece(txt,t_rect);
-  p_l=(piece_t*)malloc(sizeof(piece_t));
-  init_piece(p_l);
+  p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
+  extract(txt, &form, p_l);
 
   t_str=(char *)malloc(sizeof(char)*50);
   
@@ -44,7 +40,7 @@ int main(int argc, char* argv[])
   SDL_WM_SetCaption("Pentomino", "Pentomino");
 
   TTF_Init();
-  
+
   /* create window */
   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
@@ -70,7 +66,7 @@ int main(int argc, char* argv[])
   while (!gameover)
     {
       UpdateEvents(&in);
-      if(in.mousebuttons[SDL_BUTTON_LEFT] && mod==0){
+      if(in.mousebuttons[SDL_BUTTON_LEFT]){
 	in.mousebuttons[SDL_BUTTON_LEFT] = 0;
 	mouse_state = (mouse_state + 1) % 2;
       }
@@ -80,8 +76,7 @@ int main(int argc, char* argv[])
       if(in.key[SDLK_p] && DEBUG_MOD){
 	in.key[SDLK_p]=0;
 	mod = (mod + 1)%2;
-      }
-      if(mod!=0){
+	chgt_st = 1;
 	mouse_state = 0;
       }
       /* Draw the background */
@@ -109,15 +104,14 @@ int main(int argc, char* argv[])
 	  p_chrono.y = 5;
 	  SDL_BlitSurface(text, NULL, screen, &p_chrono);
 	  
-	  
 	  p_rect.w = 20;
 	  p_rect.h = 20;
-	  for(int i=0;i<82;i++){
-	    p_rect.y=20*i;
+	  for(int i=0;i<form.hei;i++){
+	    p_rect.y=form.TLy + 20 * i;
 	    for(int j=0;j<16;j++){
-	      p_rect.x=20*j;
-	      if(t_rect[i][j]=='1'){
-		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,0,0,255));
+	      p_rect.x=form.TLx + 20 * j;
+	      if(form.shape[i][j]=='1'){
+		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,0,0,0));
 	      }
 	    }
 	  }
@@ -136,21 +130,22 @@ int main(int argc, char* argv[])
 	SDL_UpdateRect(screen,0,0,0,0);	
     }
   /* clean up */
-  free_piece(p_l);
-  free(p_l);
   free(t_str);
   SDL_FreeSurface(bcgr);
-  SDL_FreeSurface(text);
+  if(chgt_st){
+    SDL_FreeSurface(text);
+  }
+  for(int i=0;i<form.hei;i++){
+    free(form.shape[i]);
+  }
+  free(form.shape);
+  free(p_l);
   SDL_FreeSurface(title);
   SDL_FreeSurface(screen);
   TTF_CloseFont(font_timer);
   TTF_CloseFont(font_title);
   TTF_Quit();
   SDL_Quit();
-  for(int i=0;i<82;i++){
-    free(t_rect[i]);
-  }
-  free(t_rect);
   fclose(txt);
   
   return 0;

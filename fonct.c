@@ -1,30 +1,5 @@
 #include "fonct.h"
 
-void init_piece(piece_t* p)
-{
-  p->shape=(char**)malloc(5*sizeof(char*));
-  for(int i=0;i<5;i++){
-    p->shape[i]=(char*)malloc(5*sizeof(char));
-  }
-}
-
-void free_piece(piece_t* p)
-{
-  for(int i=0;i<5;i++){
-    free(p->shape[i]);
-  }
-  free(p->shape);
-}
-
-void create_piece(FILE *txt, char **piece)
-{
-  char * temp;
-  for(int i=0;i<82;i++){
-    temp = fgets(piece[i],17,txt);
-  }
-  free(temp);
-}
-
 void UpdateEvents(input_t* in)
 {
   SDL_Event event;
@@ -55,4 +30,41 @@ void UpdateEvents(input_t* in)
       break;
     }
   }
+}
+
+void extract(FILE *txt, grill_t *form, piece_t *piec)
+{
+  char * temp, line[100];
+  int length = 6;
+  int i;
+  for(i=0;i<4;i++){
+    temp = fgets(line,length,txt);
+    switch(i){
+    case 0:
+      form->len = atoi(line);
+      if(form->len > 5){
+	length = form->len + 1;
+      }
+      break;
+    case 1:
+      form->hei = atoi(line);
+      break;
+    case 2:
+      form->TLx = atoi(line);
+      break;
+    case 3:
+      form->TLy = atoi(line);
+      break;
+    default:
+      break;
+    }
+  }
+  form->shape = (char **)malloc(sizeof(char *) * form->hei);
+  for(i=0;i<form->hei;i++){
+    form->shape[i] = (char *)malloc(sizeof(char) * form->len);
+  }
+  for(i=0;i<form->hei;i++){
+    temp = fgets(form->shape[i],length,txt);
+  }
+  free(temp);
 }

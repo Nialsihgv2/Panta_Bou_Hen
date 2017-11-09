@@ -42,10 +42,6 @@ struct Input
 };
 
 
-void init_piece(piece_t* p);
-
-void free_piece(piece_t* p);
-
-void create_piece(FILE *txt, char **piece);
-
 void UpdateEvents(input_t* in);
+
+void extract(FILE *txt, grill_t *form, piece_t *piec);
