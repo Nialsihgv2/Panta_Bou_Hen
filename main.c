@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   in_time = time(NULL);
   sprintf(t_str, "Pentomino");
   title = TTF_RenderText_Blended(font_title, t_str, black);
-  mod = 0;
+  mod = 1;
   mouse_state = 0;
   position.x = 200;
   position.y = 157;
@@ -114,12 +114,14 @@ int main(int argc, char* argv[])
 	      }
 	    }
 	  }
-	  for(int i=0;i<5;i++){
-	    p_rect.y=p_l[0].posy + 20 * i;
-	    for(int j=0;j<5;j++){
-	      p_rect.x=p_l[0].posx + 20 * j;
-	      if(p_l[0].shape[i][j]=='1'){
-		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,0,0,255));
+	  for(int k=0;k<12;k++){
+	    for(int i=0;i<5;i++){
+	      p_rect.y=p_l[k].posy + 20 * i;
+	      for(int j=0;j<5;j++){
+		p_rect.x=p_l[k].posx + 20 * j;
+		if(p_l[k].shape[i][j]=='1'){
+		  SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,0,0,255));
+		}
 	      }
 	    }
 	  }
@@ -137,7 +139,7 @@ int main(int argc, char* argv[])
 	SDL_UpdateRect(screen,0,0,0,0);	
     }
   /* clean up */
-  for(int i=0;i<1;i++){
+  for(int i=0;i<12;i++){
     for(int j=0;j<5;j++){
       free(p_l[i].shape[j]);
     }

@@ -66,7 +66,7 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
   for(i=0;i<form->hei;i++){
     temp = fgets(form->shape[i],length,txt);
   }
-  for(i=0;i<1;i++){
+  for(i=0;i<12;i++){
     piec[i].shape = (char**)malloc(sizeof(char*) * 5);
     for(j=0;j<5;j++){
       piec[i].shape[j] = (char*)malloc(sizeof(char) * 5);
