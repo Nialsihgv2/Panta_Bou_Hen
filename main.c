@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
   char *t_str;
   TTF_Font *font_timer, *font_title;
   SDL_Color black = {0, 0, 0};
-  piece_t *p_l;
+  piece_t p_l;
   Uint32 startT;
   FILE* txt = NULL;
   //char **t_rect;
@@ -28,8 +28,8 @@ int main(int argc, char* argv[])
   memset(&in,0,sizeof(in));
 
   txt = fopen("airplane.txt","r");
-  p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
-  extract(txt, &form, p_l);
+  //p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
+  extract(txt, &form, &p_l);
 
   t_str=(char *)malloc(sizeof(char)*50);
   
@@ -65,6 +65,10 @@ int main(int argc, char* argv[])
 
   while (!gameover)
     {
+      startT = SDL_GetTicks();
+      if(SDL_GetTicks()-startT < 1000/120){
+	SDL_Delay((1000/120)-(SDL_GetTicks()-startT));
+      }
       UpdateEvents(&in);
       if(in.mousebuttons[SDL_BUTTON_LEFT]){
 	in.mousebuttons[SDL_BUTTON_LEFT] = 0;
@@ -85,10 +89,6 @@ int main(int argc, char* argv[])
       switch(mod){
       case 1:
 	if(mod==1){
-	  startT = SDL_GetTicks();
-	  if(SDL_GetTicks()-startT < 1000/60){
-	    SDL_Delay((1000/60)-(SDL_GetTicks()-startT));
-	  }
 	  t_temp = time(NULL);
 	  if(t_temp!=in_time){
 	    t_int = difftime(in_time, start);
@@ -115,7 +115,15 @@ int main(int argc, char* argv[])
 	      }
 	    }
 	  }
-	  
+	  for(int i=0;i<5;i++){
+	    p_rect.y=p_l.posy + 20 * i;
+	    for(int j=0;j<5;j++){
+	      p_rect.x=p_l.posx + 20 * j;
+	      if(p_l.shape[i][j]=='1'){
+		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,0,0,255));
+	      }
+	    }
+	  }
 	}
 	break;
       default:
@@ -139,7 +147,7 @@ int main(int argc, char* argv[])
     free(form.shape[i]);
   }
   free(form.shape);
-  free(p_l);
+  //free(p_l);
   SDL_FreeSurface(title);
   SDL_FreeSurface(screen);
   TTF_CloseFont(font_timer);

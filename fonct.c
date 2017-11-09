@@ -34,9 +34,9 @@ void UpdateEvents(input_t* in)
 
 void extract(FILE *txt, grill_t *form, piece_t *piec)
 {
-  char * temp, line[100];
+  char *temp, line[100];
   int length = 6;
-  int i;
+  int i,j;
   for(i=0;i<4;i++){
     temp = fgets(line,length,txt);
     switch(i){
@@ -66,5 +66,27 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
   for(i=0;i<form->hei;i++){
     temp = fgets(form->shape[i],length,txt);
   }
-  free(temp);
+  for(i=0;i<1;i++){
+    piec->shape = (char**)malloc(sizeof(char*) * 5);
+    for(j=0;j<5;j++){
+      piec->shape[j] = (char*)malloc(sizeof(char) * 5);
+    }
+    for(j=0;j<8;j++){
+      temp = fgets(line,length,txt);
+      switch(j){
+      case 0:
+	piec->name = line[0];
+	break;
+      case 1:
+	piec->posx = atoi(line);
+	break;
+      case 2:
+	piec->posy = atoi(line);
+	break;
+      default:
+	strcpy(piec->shape[j-3],line);
+	break;
+      }
+    }
+  }
 }
