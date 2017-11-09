@@ -67,26 +67,27 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
     temp = fgets(form->shape[i],length,txt);
   }
   for(i=0;i<1;i++){
-    piec->shape = (char**)malloc(sizeof(char*) * 5);
+    piec[i].shape = (char**)malloc(sizeof(char*) * 5);
     for(j=0;j<5;j++){
-      piec->shape[j] = (char*)malloc(sizeof(char) * 5);
+      piec[i].shape[j] = (char*)malloc(sizeof(char) * 5);
     }
     for(j=0;j<8;j++){
       temp = fgets(line,length,txt);
       switch(j){
       case 0:
-	piec->name = line[0];
+	piec[i].name = line[0];
 	break;
       case 1:
-	piec->posx = atoi(line);
+	piec[i].posx = atoi(line);
 	break;
       case 2:
-	piec->posy = atoi(line);
+	piec[i].posy = atoi(line);
 	break;
       default:
-	strcpy(piec->shape[j-3],line);
+	strcpy(piec[i].shape[j-3],line);
 	break;
       }
     }
   }
+
 }

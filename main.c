@@ -18,18 +18,17 @@ int main(int argc, char* argv[])
   char *t_str;
   TTF_Font *font_timer, *font_title;
   SDL_Color black = {0, 0, 0};
-  piece_t p_l;
+  piece_t *p_l;
   Uint32 startT;
   FILE* txt = NULL;
-  //char **t_rect;
   input_t in;
   grill_t form;
 
   memset(&in,0,sizeof(in));
 
   txt = fopen("airplane.txt","r");
-  //p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
-  extract(txt, &form, &p_l);
+  p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
+  extract(txt, &form, p_l);
 
   t_str=(char *)malloc(sizeof(char)*50);
   
@@ -116,10 +115,10 @@ int main(int argc, char* argv[])
 	    }
 	  }
 	  for(int i=0;i<5;i++){
-	    p_rect.y=p_l.posy + 20 * i;
+	    p_rect.y=p_l[0].posy + 20 * i;
 	    for(int j=0;j<5;j++){
-	      p_rect.x=p_l.posx + 20 * j;
-	      if(p_l.shape[i][j]=='1'){
+	      p_rect.x=p_l[0].posx + 20 * j;
+	      if(p_l[0].shape[i][j]=='1'){
 		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,0,0,255));
 	      }
 	    }
@@ -138,6 +137,13 @@ int main(int argc, char* argv[])
 	SDL_UpdateRect(screen,0,0,0,0);	
     }
   /* clean up */
+  for(int i=0;i<1;i++){
+    for(int j=0;j<5;j++){
+      free(p_l[i].shape[j]);
+    }
+    free(p_l[i].shape);
+  }
+  free(p_l);
   free(t_str);
   SDL_FreeSurface(bcgr);
   if(chgt_st){
@@ -147,7 +153,6 @@ int main(int argc, char* argv[])
     free(form.shape[i]);
   }
   free(form.shape);
-  //free(p_l);
   SDL_FreeSurface(title);
   SDL_FreeSurface(screen);
   TTF_CloseFont(font_timer);
