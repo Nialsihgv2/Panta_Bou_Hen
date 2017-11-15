@@ -91,3 +91,55 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
   }
 
 }
+
+void apply_color(int state, int* red, int* green, int *blue)
+{
+  switch(state){
+  case 0:
+  case 1:
+  case 2:
+  case 10:
+  case 11:
+    *red = 255;
+    break;
+  case 3:
+  case 9:
+    *red = 127;
+    break;
+  default:
+    *red = 0;
+    break;
+  }
+  switch(state){
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6:
+    *green = 255;
+    break;
+  case 1:
+  case 7:
+    *green = 127;
+    break;
+  default:
+    *green = 0;
+    break;
+  }
+  switch(state){
+  case 6:
+  case 7:
+  case 8:
+  case 9:
+  case 10:
+    *blue = 255;
+    break;
+  case 5:
+  case 11:
+    *blue = 127;
+    break;
+  default:
+    *blue = 0;
+    break;
+  }
+}

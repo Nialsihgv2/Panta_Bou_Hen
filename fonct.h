@@ -45,3 +45,5 @@ struct Input
 void UpdateEvents(input_t* in);
 
 void extract(FILE *txt, grill_t *form, piece_t *piec);
+
+void apply_color(int state, int* red, int* green, int*blue);
