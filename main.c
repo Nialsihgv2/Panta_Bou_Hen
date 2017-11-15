@@ -12,7 +12,8 @@ int main(int argc, char* argv[])
 {
   SDL_Surface *screen, *temp, *bcgr, *title;
   SDL_Rect position,p_rect;
-  int gameover, mod, mouse_state, red, green, blue;//, chgt_st = 0;
+  int gameover, mod, mouse_state, red, green, blue, chgt_st,
+    take, cnt, placed;
   char *t_str;
   TTF_Font *font_timer, *font_title;
   SDL_Color black = {0, 0, 0};
@@ -55,6 +56,7 @@ int main(int argc, char* argv[])
   title = TTF_RenderText_Blended(font_title, t_str, black);
   mod = 1;
   mouse_state = 0;
+  chgt_st = 0;
   position.x = 200;
   position.y = 157;
 
@@ -65,19 +67,7 @@ int main(int argc, char* argv[])
 	SDL_Delay((1000/120)-(SDL_GetTicks()-startT));
       }
       UpdateEvents(&in);
-      if(in.mousebuttons[SDL_BUTTON_LEFT]){
-	in.mousebuttons[SDL_BUTTON_LEFT] = 0;
-	mouse_state = (mouse_state + 1) % 2;
-      }
-      if(in.key[SDLK_ESCAPE] || in.quit){
-	gameover=1;
-      }
-      if(in.key[SDLK_p] && DEBUG_MOD){
-	in.key[SDLK_p]=0;
-	mod = (mod + 1)%2;
-	//chgt_st = 1;
-	mouse_state = 0;
-      }
+      AlterEvents(&in, &chgt_st, &gameover, &mod, &mouse_state);
       /* Draw the background */
 
       SDL_BlitSurface(bcgr, NULL, screen, NULL);
@@ -94,6 +84,61 @@ int main(int argc, char* argv[])
 	    }
 	  }
 	}
+	if(chgt_st){
+	  switch(mouse_state){
+	  case 0:
+	    cnt = 0;
+	    while(!mouse_state && cnt<12){
+	      if(p_l[cnt].posx<=in.mousex && p_l[cnt].posx+100>=in.mousex
+		 && p_l[cnt].posy<=in.mousey && p_l[cnt].posy+100>=in.mousey){
+		take = cnt;
+		mouse_state = 1;
+	      }
+	      cnt++; 
+	    }
+	    break;
+	  case 1:
+	    mouse_state = 0;
+	    p_l[take].posx -= ((p_l[take].posx + 10) % 20) - 10;
+	    p_l[take].posy -= ((p_l[take].posy + 10) % 20) - 10;
+	    break;
+	  default:
+	    break;
+	  }
+	  chgt_st = 0;
+	}
+	switch(mouse_state){
+	case 0:
+	  placed = 0;
+	  for(int i=0; i < 12;i++){
+	    if(p_l[i].posx == p_l[i].endx
+	       && p_l[i].posy == p_l[i].endy){
+	      placed++;
+	    }
+	  }
+	  if(placed == 12){
+	    gameover = 1;
+	  }
+	  break;
+	case 1:
+	  p_l[take].posx = in.mousex - 50;
+	  if(p_l[take].posx < 0){
+	    p_l[take].posx = 0;
+	  }
+	  if(p_l[take].posx > SCREEN_WIDTH - 100){
+	    p_l[take].posx = SCREEN_WIDTH - 100;
+	  }
+	  p_l[take].posy = in.mousey - 50;
+	  if(p_l[take].posy < 0){
+	    p_l[take].posy = 0;
+	  }
+	  if(p_l[take].posy > SCREEN_HEIGHT - 100){
+	    p_l[take].posy = SCREEN_HEIGHT - 100;
+	  }
+	  break;
+	default:
+	  break;
+	}
 	for(int k=0;k<12;k++){
 	  apply_color(k,&red,&green,&blue);
 	  for(int i=0;i<5;i++){
@@ -108,10 +153,6 @@ int main(int argc, char* argv[])
 	}
 	break;
       default:
-	if(mouse_state){
-	  position.x = in.mousex - 268;
-	  position.y = in.mousey - 30;
-	}
 	SDL_BlitSurface(title, NULL, screen, &position);
 	break;
       }

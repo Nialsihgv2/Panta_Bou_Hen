@@ -32,6 +32,24 @@ void UpdateEvents(input_t* in)
   }
 }
 
+void AlterEvents(input_t* in,int *chgt_st, int *gameover,
+		 int *mod, int *mouse_state)
+{
+  if(in->mousebuttons[SDL_BUTTON_LEFT]){
+    in->mousebuttons[SDL_BUTTON_LEFT] = 0;
+    *chgt_st = 1;
+  }
+  if(in->key[SDLK_ESCAPE] || in->quit){
+    *gameover=1;
+  }
+  if(in->key[SDLK_p] && DEBUG_MOD){
+    in->key[SDLK_p]=0;
+    *mod = (*mod + 1)%2;
+    *mouse_state = 0;
+  }
+}
+
+
 void extract(FILE *txt, grill_t *form, piece_t *piec)
 {
   char *temp, line[100];
@@ -71,7 +89,7 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
     for(j=0;j<5;j++){
       piec[i].shape[j] = (char*)malloc(sizeof(char) * 5);
     }
-    for(j=0;j<8;j++){
+    for(j=0;j<10;j++){
       temp = fgets(line,length,txt);
       switch(j){
       case 0:
@@ -79,12 +97,20 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
 	break;
       case 1:
 	piec[i].posx = atoi(line);
+	piec[i].stx = piec[i].posx;
 	break;
       case 2:
 	piec[i].posy = atoi(line);
+	piec[i].sty = piec[i].posy;
+	break;
+      case 3:
+	piec[i].endx = atoi(line);
+	break;
+      case 4:
+	piec[i].endy = atoi(line);
 	break;
       default:
-	strcpy(piec[i].shape[j-3],line);
+	strcpy(piec[i].shape[j-5],line);
 	break;
       }
     }

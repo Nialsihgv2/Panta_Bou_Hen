@@ -8,8 +8,6 @@
 /* Size of the window */
 #define SCREEN_WIDTH  938
 #define SCREEN_HEIGHT 621
-#define TIMER_POS_X 630
-#define TIMER_POS_Y 5
 #define DEBUG_MOD 1
 
 
@@ -20,6 +18,8 @@ typedef struct Input input_t;
 struct Piece
 {
   int posx, posy;
+  int stx, sty;
+  int endx, endy;
   char name;
   char** shape;
 };
@@ -43,6 +43,8 @@ struct Input
 
 
 void UpdateEvents(input_t* in);
+void AlterEvents(input_t* in,int *chgt_st, int *gameover,
+		 int *mod, int *mouse_state);
 
 void extract(FILE *txt, grill_t *form, piece_t *piec);
 
