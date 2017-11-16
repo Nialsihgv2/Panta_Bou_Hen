@@ -1,6 +1,6 @@
 #include "fonct.h"
 
-void UpdateEvents(input_t* in)
+void update_events(input_t* in)
 {
   SDL_Event event;
   while(SDL_PollEvent(&event)){
@@ -32,8 +32,19 @@ void UpdateEvents(input_t* in)
   }
 }
 
-void AlterEvents(input_t* in,int *chgt_st, int *gameover,
-		 int *mod, int *mouse_state)
+void alter_events_menu(input_t* in, int *gameover, int *mod)
+{
+  if(in->key[SDLK_ESCAPE] || in->quit){
+    *gameover = 1;
+  }
+  if(in->key[SDLK_m] && DEBUG_MOD){
+    in->key[SDLK_m] = 0;
+    *mod = 1;
+  }
+}
+
+void alter_events_game(input_t* in,int *chgt_st, int *gameover,
+		 int *mod, int *mouse_state, int *take)
 {
   if(in->mousebuttons[SDL_BUTTON_LEFT]){
     in->mousebuttons[SDL_BUTTON_LEFT] = 0;
@@ -42,10 +53,72 @@ void AlterEvents(input_t* in,int *chgt_st, int *gameover,
   if(in->key[SDLK_ESCAPE] || in->quit){
     *gameover=1;
   }
-  if(in->key[SDLK_p] && DEBUG_MOD){
-    in->key[SDLK_p]=0;
-    *mod = (*mod + 1)%2;
+  if(in->key[SDLK_m] && DEBUG_MOD){
+    in->key[SDLK_m]=0;
+    *mod = 0;
     *mouse_state = 0;
+  }
+  if(!*mouse_state){
+    if(in->key[SDLK_f]){
+      in->key[SDLK_f] = 0;
+      *mouse_state = 1;
+      *take = 0;
+    }
+    if(in->key[SDLK_i]){
+      in->key[SDLK_i] = 0;
+      *mouse_state = 1;
+      *take = 1;
+    }
+    if(in->key[SDLK_l]){
+      in->key[SDLK_l] = 0;
+      *mouse_state = 1;
+      *take = 2;
+    }
+    if(in->key[SDLK_n]){
+      in->key[SDLK_n] = 0;
+      *mouse_state = 1;
+      *take = 3;
+    }
+    if(in->key[SDLK_p]){
+      in->key[SDLK_p] = 0;
+      *mouse_state = 1;
+      *take = 4;
+    }
+    if(in->key[SDLK_t]){
+      in->key[SDLK_t] = 0;
+      *mouse_state = 1;
+      *take = 5;
+    }
+    if(in->key[SDLK_u]){
+      in->key[SDLK_u] = 0;
+      *mouse_state = 1;
+      *take = 6;
+    }
+    if(in->key[SDLK_v]){
+      in->key[SDLK_v] = 0;
+      *mouse_state = 1;
+      *take = 7;
+    }
+    if(in->key[SDLK_w]){
+      in->key[SDLK_w] = 0;
+      *mouse_state = 1;
+      *take = 8;
+    }
+    if(in->key[SDLK_x]){
+      in->key[SDLK_x] = 0;
+      *mouse_state = 1;
+      *take = 9;
+    }
+    if(in->key[SDLK_y]){
+      in->key[SDLK_y] = 0;
+      *mouse_state = 1;
+      *take = 10;
+    }
+    if(in->key[SDLK_z]){
+      in->key[SDLK_z] = 0;
+      *mouse_state = 1;
+      *take = 11;
+    }
   }
 }
 
@@ -80,8 +153,6 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
   form->shape = (char **)malloc(sizeof(char *) * form->hei);
   for(i=0;i<form->hei;i++){
     form->shape[i] = (char *)malloc(sizeof(char) * form->len);
-  }
-  for(i=0;i<form->hei;i++){
     temp = fgets(form->shape[i],length,txt);
   }
   for(i=0;i<12;i++){
@@ -115,7 +186,8 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
       }
     }
   }
-
+  temp = fgets(temp,2,txt);
+  free(temp);
 }
 
 void apply_color(int state, int* red, int* green, int *blue)

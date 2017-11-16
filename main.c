@@ -19,13 +19,13 @@ int main(int argc, char* argv[])
   SDL_Color black = {0, 0, 0};
   piece_t *p_l;
   Uint32 startT;
-  FILE* txt = NULL;
+  FILE* txt;
   input_t in;
   grill_t form;
 
   memset(&in,0,sizeof(in));
 
-  txt = fopen("airplane.txt","r");
+  txt = fopen("txt/butterfly.txt","r");
   p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
   extract(txt, &form, p_l);
 
@@ -66,13 +66,13 @@ int main(int argc, char* argv[])
       if(SDL_GetTicks()-startT < 1000/120){
 	SDL_Delay((1000/120)-(SDL_GetTicks()-startT));
       }
-      UpdateEvents(&in);
-      AlterEvents(&in, &chgt_st, &gameover, &mod, &mouse_state);
+      update_events(&in);
       /* Draw the background */
 
       SDL_BlitSurface(bcgr, NULL, screen, NULL);
       switch(mod){
       case 1:
+	alter_events_game(&in, &chgt_st, &gameover, &mod, &mouse_state, &take);
 	p_rect.w = 20;
 	p_rect.h = 20;
 	for(int i=0;i<form.hei;i++){
@@ -152,7 +152,8 @@ int main(int argc, char* argv[])
 	  }
 	}
 	break;
-      default:
+      case 0:
+	alter_events_menu(&in, &gameover, &mod);
 	SDL_BlitSurface(title, NULL, screen, &position);
 	break;
       }
@@ -160,6 +161,9 @@ int main(int argc, char* argv[])
       SDL_UpdateRect(screen,0,0,0,0);	
     }
   /* clean up */
+  for(int i=0;i<12;i++){
+    printf("%d;%d\n",p_l[i].posx,p_l[i].posy);
+  }
   for(int i=0;i<12;i++){
     for(int j=0;j<5;j++){
       free(p_l[i].shape[j]);

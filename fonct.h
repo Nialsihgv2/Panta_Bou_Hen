@@ -6,8 +6,8 @@
 #include <time.h>
 #include <stdbool.h>
 /* Size of the window */
-#define SCREEN_WIDTH  938
-#define SCREEN_HEIGHT 621
+#define SCREEN_WIDTH  920
+#define SCREEN_HEIGHT 620
 #define DEBUG_MOD 1
 
 
@@ -42,9 +42,12 @@ struct Input
 };
 
 
-void UpdateEvents(input_t* in);
-void AlterEvents(input_t* in,int *chgt_st, int *gameover,
-		 int *mod, int *mouse_state);
+void update_events(input_t* in);
+
+void alter_events_menu(input_t *in, int *gameover, int *mod);
+
+void alter_events_game(input_t* in,int *chgt_st, int *gameover,
+		 int *mod, int *mouse_state, int *take);
 
 void extract(FILE *txt, grill_t *form, piece_t *piec);
 
