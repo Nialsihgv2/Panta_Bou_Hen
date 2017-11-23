@@ -6,11 +6,8 @@
 #include <time.h>
 #include <stdbool.h>
 /* Size of the window */
-#define SCREEN_WIDTH  938
-#define SCREEN_HEIGHT 621
-#define TIMER_POS_X 630
-#define TIMER_POS_Y 5
-#define DEBUG_MOD 1
+#define SCREEN_WIDTH  920
+#define SCREEN_HEIGHT 620
 
 
 typedef struct Piece piece_t;
@@ -20,6 +17,8 @@ typedef struct Input input_t;
 struct Piece
 {
   int posx, posy;
+  int stx, sty;
+  int endx, endy;
   char name;
   char** shape;
 };
@@ -42,10 +41,13 @@ struct Input
 };
 
 
-void init_piece(piece_t* p);
+void update_events(input_t* in);
 
-void free_piece(piece_t* p);
+void alter_events_menu(input_t *in, int *gameover, int *chgt_st);
 
-void create_piece(FILE *txt, char **piece);
+void alter_events_game(input_t* in,int *chgt_st, int *gameover,
+		 int *chgt_mod, int *mouse_state, int *take);
 
-void UpdateEvents(input_t* in);
+void extract(FILE *txt, grill_t *form, piece_t *piec);
+
+void apply_color(int state, int* red, int* green, int*blue);
