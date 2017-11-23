@@ -77,12 +77,12 @@ int main(int argc, char* argv[])
       SDL_BlitSurface(bcgr, NULL, screen, NULL);
       switch(mod){
       case 1:
-	alter_events_game(&in, &chgt_st, &gameover, &mod, &mouse_state, &take);
+	alter_events_game(&in, &chgt_st, &gameover, &chgt_mod, &mouse_state, &take);
 	p_rect.w = 20;
 	p_rect.h = 20;
 	for(int i=0;i<form.hei;i++){
 	  p_rect.y=form.TLy + 20 * i;
-	  for(int j=0;j<16;j++){
+	  for(int j=0;j<form.len;j++){
 	    p_rect.x=form.TLx + 20 * j;
 	    if(form.shape[i][j]=='1'){
 	      SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,0,0,0));
@@ -241,6 +241,7 @@ int main(int argc, char* argv[])
 	    free(form.shape[i]);
 	  }
 	  free(form.shape);
+	  mouse_state = 0;
 	  mod = 0;
 	  break;
 	}
@@ -250,10 +251,10 @@ int main(int argc, char* argv[])
       SDL_UpdateRect(screen,0,0,0,0);	
     }
   /* clean up */
-  for(int i=0;i<12;i++){
-    printf("%c:%d;%d\n",p_l[i].name,p_l[i].posx,p_l[i].posy);
-  }
   if(mod == 1){
+    for(int i=0;i<12;i++){
+      printf("%c:%d;%d\n",p_l[i].name,p_l[i].posx,p_l[i].posy);
+    }
     for(int i=0;i<12;i++){
       for(int j=0;j<5;j++){
 	free(p_l[i].shape[j]);

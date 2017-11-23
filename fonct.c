@@ -28,6 +28,7 @@ void update_events(input_t* in)
       break;
     default:
       break;
+
     }
   }
 }
@@ -55,7 +56,7 @@ void alter_events_game(input_t* in,int *chgt_st, int *gameover,
   }
   if(in->key[SDLK_ESCAPE]){
     in->key[SDLK_ESCAPE] = 0;
-    *chgt_mod = 0;
+    *chgt_mod = 1;
   }
   if(!*mouse_state){
     if(in->key[SDLK_f]){
