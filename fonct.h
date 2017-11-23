@@ -8,7 +8,6 @@
 /* Size of the window */
 #define SCREEN_WIDTH  920
 #define SCREEN_HEIGHT 620
-#define DEBUG_MOD 1
 
 
 typedef struct Piece piece_t;
@@ -44,7 +43,7 @@ struct Input
 
 void update_events(input_t* in);
 
-void alter_events_menu(input_t *in, int *gameover, int *mod);
+void alter_events_menu(input_t *in, int *gameover, int *chgt_st);
 
 void alter_events_game(input_t* in,int *chgt_st, int *gameover,
 		 int *mod, int *mouse_state, int *take);

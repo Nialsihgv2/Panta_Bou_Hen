@@ -32,14 +32,14 @@ void update_events(input_t* in)
   }
 }
 
-void alter_events_menu(input_t* in, int *gameover, int *mod)
+void alter_events_menu(input_t* in, int *gameover, int *chgt_st)
 {
-  if(in->key[SDLK_ESCAPE] || in->quit){
+  if(in->quit){
     *gameover = 1;
   }
-  if(in->key[SDLK_m] && DEBUG_MOD){
-    in->key[SDLK_m] = 0;
-    *mod = 1;
+  if(in->mousebuttons[SDL_BUTTON_LEFT]){
+    in->mousebuttons[SDL_BUTTON_LEFT] = 0;
+    *chgt_st = 1;
   }
 }
 
@@ -50,13 +50,12 @@ void alter_events_game(input_t* in,int *chgt_st, int *gameover,
     in->mousebuttons[SDL_BUTTON_LEFT] = 0;
     *chgt_st = 1;
   }
-  if(in->key[SDLK_ESCAPE] || in->quit){
+  if(in->quit){
     *gameover=1;
   }
-  if(in->key[SDLK_m] && DEBUG_MOD){
-    in->key[SDLK_m]=0;
+  if(in->key[SDLK_ESCAPE]){
+    in->key[SDLK_ESCAPE] = 0;
     *mod = 0;
-    *mouse_state = 0;
   }
   if(!*mouse_state){
     if(in->key[SDLK_f]){

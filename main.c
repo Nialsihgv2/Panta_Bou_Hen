@@ -10,13 +10,14 @@
 
 int main(int argc, char* argv[])
 {
-  SDL_Surface *screen, *temp, *bcgr, *title;
+  SDL_Surface *screen, *temp, *bcgr, *title, *sel01, *sel02, *sel03,
+    *sel11 , *sel12, *sel13;
   SDL_Rect position,p_rect;
   int gameover, mod, mouse_state, red, green, blue, chgt_st,
-    take, cnt, placed;
+    take, cnt, placed, chgt_mod, chgt_menu;
   char *t_str;
-  TTF_Font *font_timer, *font_title;
-  SDL_Color black = {0, 0, 0};
+  TTF_Font *font_title, *font_select;
+  SDL_Color black = {0, 0, 0}, bluegen = {0, 0, 127};
   piece_t *p_l;
   Uint32 startT;
   FILE* txt;
@@ -25,7 +26,7 @@ int main(int argc, char* argv[])
 
   memset(&in,0,sizeof(in));
 
-  txt = fopen("txt/butterfly.txt","r");
+  txt = fopen("txt/airplane.txt","r");
   p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
   extract(txt, &form, p_l);
 
@@ -47,18 +48,25 @@ int main(int argc, char* argv[])
   bcgr = SDL_DisplayFormatAlpha(temp);
   SDL_FreeSurface(temp);
   
-  font_timer = TTF_OpenFont("BlockoBit.ttf",32);
+  font_select = TTF_OpenFont("BlockoBit.ttf",48);
   font_title = TTF_OpenFont("BlockoBit.ttf",64);
   
   gameover = 0;
   /* main loop: check events and re-draw the window until the end */
-  sprintf(t_str, "Pentomino");
+  sprintf(t_str, "PENTOMINO");
   title = TTF_RenderText_Blended(font_title, t_str, black);
-  mod = 1;
+  sprintf(t_str, "New Game");
+  sel01 = TTF_RenderText_Blended(font_select, t_str, black);
+  sel11 = TTF_RenderText_Blended(font_select, t_str, bluegen);
+  sprintf(t_str, "Setting");
+  sel02 = TTF_RenderText_Blended(font_select, t_str, black);
+  sel12 = TTF_RenderText_Blended(font_select, t_str, bluegen);
+  sprintf(t_str, "Quit");
+  sel03 = TTF_RenderText_Blended(font_select, t_str, black);
+  sel13 = TTF_RenderText_Blended(font_select, t_str, bluegen);
+  mod = 0;
   mouse_state = 0;
   chgt_st = 0;
-  position.x = 200;
-  position.y = 157;
 
   while (!gameover)
     {
@@ -117,7 +125,7 @@ int main(int argc, char* argv[])
 	    }
 	  }
 	  if(placed == 12){
-	    gameover = 1;
+	    mod = 0;
 	  }
 	  break;
 	case 1:
@@ -146,23 +154,85 @@ int main(int argc, char* argv[])
 	    for(int j=0;j<5;j++){
 	      p_rect.x=p_l[k].posx + 20 * j;
 	      if(p_l[k].shape[i][j]=='1'){
-		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,red,green,blue));
+		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,
+						       red,green,blue));
+	      }
+	    }
+	  }
+	}
+	if(mouse_state){
+	  apply_color(take,&red,&green,&blue);
+	  for(int i=0;i<5;i++){
+	    p_rect.y=p_l[take].posy + 20 * i;
+	    for(int j=0;j<5;j++){
+	      p_rect.x=p_l[take].posx + 20 * j;
+	      if(p_l[take].shape[i][j]=='1'){
+		SDL_FillRect(screen,&p_rect,SDL_MapRGB(screen->format,
+						       red,green,blue));
 	      }
 	    }
 	  }
 	}
 	break;
       case 0:
-	alter_events_menu(&in, &gameover, &mod);
+	alter_events_menu(&in, &gameover, &chgt_st);
+	position.x = 200;
+	position.y = 90;
 	SDL_BlitSurface(title, NULL, screen, &position);
+	position.x = 280;
+	position.y = 260;
+	if(in.mousex >= 280 && in.mousex <= 640 &&
+	   in.mousey >= 260 && in.mousey <= 300){
+	  SDL_BlitSurface(sel11, NULL, screen, &position);
+	}else{
+	  SDL_BlitSurface(sel01, NULL, screen, &position);
+	}	  
+	position.x = 310;
+	position.y = 340;
+	if(in.mousex >= 310 && in.mousex <= 625 &&
+	   in.mousey >= 340 && in.mousey <= 380){
+	  SDL_BlitSurface(sel12, NULL, screen, &position);
+	}else{
+	  SDL_BlitSurface(sel02, NULL, screen, &position);
+	}
+	position.x = 370;
+	position.y = 425;
+	if(in.mousex >= 370 && in.mousex <= 550 &&
+	   in.mousey >= 425 && in.mousey <= 460){
+	  SDL_BlitSurface(sel13, NULL, screen, &position);
+	}else{
+	  SDL_BlitSurface(sel03, NULL, screen, &position);
+	}
+	if(chgt_st){
+	  if(in.mousex >= 280 && in.mousex <= 640 &&
+	     in.mousey >= 260 && in.mousey <= 300){
+	    chgt_mod = 1;
+	    chgt_menu = 1;
+	  }
+	  if(in.mousex >= 370 && in.mousex <= 550 &&
+	     in.mousey >= 425 && in.mousey <= 460){
+	    gameover = 1;
+	  }
+	}
+	chgt_st = 0;
 	break;
+      }
+      if(chgt_mod){
+	switch(mod){
+	case 0:
+	  switch(chgt_menu){
+	  case 1:
+	    break;
+	  }
+	  break;
+	}
       }
       /* update the screen */
       SDL_UpdateRect(screen,0,0,0,0);	
     }
   /* clean up */
   for(int i=0;i<12;i++){
-    printf("%d;%d\n",p_l[i].posx,p_l[i].posy);
+    printf("%c:%d;%d\n",p_l[i].name,p_l[i].posx,p_l[i].posy);
   }
   for(int i=0;i<12;i++){
     for(int j=0;j<5;j++){
@@ -178,8 +248,14 @@ int main(int argc, char* argv[])
   }
   free(form.shape);
   SDL_FreeSurface(title);
+  SDL_FreeSurface(sel01);
+  SDL_FreeSurface(sel02);
+  SDL_FreeSurface(sel03);
+  SDL_FreeSurface(sel11);
+  SDL_FreeSurface(sel12);
+  SDL_FreeSurface(sel13);
   SDL_FreeSurface(screen);
-  TTF_CloseFont(font_timer);
+  TTF_CloseFont(font_select);
   TTF_CloseFont(font_title);
   TTF_Quit();
   SDL_Quit();
