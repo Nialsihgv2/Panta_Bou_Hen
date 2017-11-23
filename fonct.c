@@ -44,7 +44,7 @@ void alter_events_menu(input_t* in, int *gameover, int *chgt_st)
 }
 
 void alter_events_game(input_t* in,int *chgt_st, int *gameover,
-		 int *mod, int *mouse_state, int *take)
+		 int *chgt_mod, int *mouse_state, int *take)
 {
   if(in->mousebuttons[SDL_BUTTON_LEFT]){
     in->mousebuttons[SDL_BUTTON_LEFT] = 0;
@@ -55,7 +55,7 @@ void alter_events_game(input_t* in,int *chgt_st, int *gameover,
   }
   if(in->key[SDLK_ESCAPE]){
     in->key[SDLK_ESCAPE] = 0;
-    *mod = 0;
+    *chgt_mod = 0;
   }
   if(!*mouse_state){
     if(in->key[SDLK_f]){

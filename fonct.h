@@ -46,7 +46,7 @@ void update_events(input_t* in);
 void alter_events_menu(input_t *in, int *gameover, int *chgt_st);
 
 void alter_events_game(input_t* in,int *chgt_st, int *gameover,
-		 int *mod, int *mouse_state, int *take);
+		 int *chgt_mod, int *mouse_state, int *take);
 
 void extract(FILE *txt, grill_t *form, piece_t *piec);
 

@@ -26,9 +26,6 @@ int main(int argc, char* argv[])
 
   memset(&in,0,sizeof(in));
 
-  txt = fopen("txt/airplane.txt","r");
-  p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
-  extract(txt, &form, p_l);
 
   t_str=(char *)malloc(sizeof(char)*50);
   
@@ -125,7 +122,7 @@ int main(int argc, char* argv[])
 	    }
 	  }
 	  if(placed == 12){
-	    mod = 0;
+	    chgt_mod = 1;
 	  }
 	  break;
 	case 1:
@@ -222,11 +219,33 @@ int main(int argc, char* argv[])
 	case 0:
 	  switch(chgt_menu){
 	  case 1:
+	    txt = fopen("txt/cat.txt","r");
+	    p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
+	    extract(txt, &form, p_l);
+	    fclose(txt);
+	    mod = 1;
+	    break;
+	  default:
 	    break;
 	  }
 	  break;
+	case 1:
+	  for(int i=0;i<12;i++){
+	    for(int j=0;j<5;j++){
+	      free(p_l[i].shape[j]);
+	    }
+	    free(p_l[i].shape);
+	  }
+	  free(p_l);
+	  for(int i=0;i<form.hei;i++){
+	    free(form.shape[i]);
+	  }
+	  free(form.shape);
+	  mod = 0;
+	  break;
 	}
       }
+      chgt_mod = 0;
       /* update the screen */
       SDL_UpdateRect(screen,0,0,0,0);	
     }
@@ -234,19 +253,21 @@ int main(int argc, char* argv[])
   for(int i=0;i<12;i++){
     printf("%c:%d;%d\n",p_l[i].name,p_l[i].posx,p_l[i].posy);
   }
-  for(int i=0;i<12;i++){
-    for(int j=0;j<5;j++){
-      free(p_l[i].shape[j]);
+  if(mod == 1){
+    for(int i=0;i<12;i++){
+      for(int j=0;j<5;j++){
+	free(p_l[i].shape[j]);
+      }
+      free(p_l[i].shape);
     }
-    free(p_l[i].shape);
+    free(p_l);
+    for(int i=0;i<form.hei;i++){
+      free(form.shape[i]);
+    }
+    free(form.shape);
   }
-  free(p_l);
   free(t_str);
   SDL_FreeSurface(bcgr);
-  for(int i=0;i<form.hei;i++){
-    free(form.shape[i]);
-  }
-  free(form.shape);
   SDL_FreeSurface(title);
   SDL_FreeSurface(sel01);
   SDL_FreeSurface(sel02);
@@ -259,7 +280,6 @@ int main(int argc, char* argv[])
   TTF_CloseFont(font_title);
   TTF_Quit();
   SDL_Quit();
-  fclose(txt);
   
   return 0;
 }
