@@ -35,7 +35,7 @@ void update_events(input_t* in)
 
 void alter_events_menu(input_t* in, int *gameover, int *chgt_st)
 {
-  if(in->quit){
+  if(in->quit || in->key[SDLK_ESCAPE]){
     *gameover = 1;
   }
   if(in->mousebuttons[SDL_BUTTON_LEFT]){
@@ -45,7 +45,8 @@ void alter_events_menu(input_t* in, int *gameover, int *chgt_st)
 }
 
 void alter_events_game(input_t* in,int *chgt_st, int *gameover,
-		 int *chgt_mod, int *mouse_state, int *take)
+		       int *chgt_mod, int *mouse_state, int *take,
+		       piece_t* piec, int *mod)
 {
   if(in->mousebuttons[SDL_BUTTON_LEFT]){
     in->mousebuttons[SDL_BUTTON_LEFT] = 0;
@@ -53,12 +54,14 @@ void alter_events_game(input_t* in,int *chgt_st, int *gameover,
   }
   if(in->quit){
     *gameover=1;
+    *chgt_mod = 1;
   }
   if(in->key[SDLK_ESCAPE]){
     in->key[SDLK_ESCAPE] = 0;
     *chgt_mod = 1;
   }
-  if(!*mouse_state){
+  switch(*mouse_state){
+  case 0:
     if(in->key[SDLK_f]){
       in->key[SDLK_f] = 0;
       *mouse_state = 1;
@@ -119,9 +122,34 @@ void alter_events_game(input_t* in,int *chgt_st, int *gameover,
       *mouse_state = 1;
       *take = 11;
     }
+    break;
+  case 1:
+    if(in->mousebuttons[SDL_BUTTON_RIGHT]){
+      in->mousebuttons[SDL_BUTTON_RIGHT] = 0;
+      *mouse_state = 0;
+      piec[*take].posx = piec[*take].stx;
+      piec[*take].posy = piec[*take].sty;
+    }
+    break;
+  }
+  if(in->key[SDLK_m]){
+    in->key[SDLK_m] = 0;
+    *mod = 3;
   }
 }
 
+void alter_events_endgame(input_t* in, int *gameover, int *chgt_mod)
+{
+  if(in->quit){
+    *gameover = 1;
+    *chgt_mod = 1;
+  }
+  if(in->key[SDLK_ESCAPE] || in->mousebuttons[SDL_BUTTON_LEFT]){
+    in->key[SDLK_ESCAPE] = 0;
+    in->mousebuttons[SDL_BUTTON_LEFT] = 0;
+    *chgt_mod = 1;
+  }
+}
 
 void extract(FILE *txt, grill_t *form, piece_t *piec)
 {
