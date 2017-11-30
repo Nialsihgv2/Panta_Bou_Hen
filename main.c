@@ -11,21 +11,23 @@
 int main(int argc, char* argv[])
 {
   SDL_Surface *screen, *temp, *bcgr, *title, *sel01, *sel02, *sel03,
-    *sel11 , *sel12, *sel13, *cong;
+    *sel11 , *sel12, *sel13, *cong, **lvsur, *rarrow, **nb_sur, *nb_lev;
   SDL_Rect position,p_rect;
   int gameover, mod, mouse_state, red, green, blue, chgt_st,
-    take, cnt, placed, chgt_mod, chgt_menu;
+    take, cnt, placed, chgt_mod, lv_int;
   char *t_str;
-  TTF_Font *font_title, *font_select;
+  TTF_Font *font_title, *font_select, *font_lv;
   SDL_Color black = {0, 0, 0}, bluegen = {0, 0, 127};
   piece_t *p_l;
   Uint32 startT;
   FILE* txt;
   input_t in;
   grill_t form;
+  level_t lv;
 
   memset(&in,0,sizeof(in));
 
+  init_level(&lv);
 
   t_str=(char *)malloc(sizeof(char)*50);
   
@@ -47,6 +49,7 @@ int main(int argc, char* argv[])
   
   font_select = TTF_OpenFont("ttf/BlockoBit.ttf",48);
   font_title = TTF_OpenFont("ttf/BlockoBit.ttf",64);
+  font_lv = TTF_OpenFont("ttf/PressStart2P.ttf",36);
   
   gameover = 0;
   /* main loop: check events and re-draw the window until the end */
@@ -61,11 +64,27 @@ int main(int argc, char* argv[])
   sprintf(t_str, "Quit");
   sel03 = TTF_RenderText_Blended(font_select, t_str, black);
   sel13 = TTF_RenderText_Blended(font_select, t_str, bluegen);
-  sprintf(t_str, "CONGRATULATION");
+  sprintf(t_str, "CONGRATULATIONS");
   cong = TTF_RenderText_Blended(font_title, t_str, black);
   mod = 0;
   mouse_state = 0;
   chgt_st = 0;
+  lv_int = 0;
+  lvsur = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * NB_LEVELS);
+  for(int i=0;i<NB_LEVELS;i++){
+    strcpy(t_str, lv.level[i]);
+    lvsur[i] = TTF_RenderText_Blended(font_lv, t_str, black);
+  }
+  sprintf(t_str, ">");
+  rarrow = TTF_RenderText_Blended(font_lv, t_str, black);
+
+  nb_sur = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * NB_LEVELS);
+  for(int i=0;i<NB_LEVELS;i++){
+    sprintf(t_str,"%d%d",(i+1)/10,(i+1)%10);
+    nb_sur[i] = TTF_RenderText_Blended(font_lv, t_str, black);
+  }
+  sprintf(t_str,"/%d",NB_LEVELS);
+  nb_lev = TTF_RenderText_Blended(font_lv, t_str, black);
 
   while (!gameover)
     {
@@ -110,8 +129,7 @@ int main(int argc, char* argv[])
 	if(chgt_st){
 	  if(in.mousex >= 280 && in.mousex <= 640 &&
 	     in.mousey >= 260 && in.mousey <= 300){
-	    chgt_mod = 1;
-	    chgt_menu = 1;
+	    mod = 1;
 	  }
 	  if(in.mousex >= 370 && in.mousex <= 550 &&
 	     in.mousey >= 425 && in.mousey <= 460){
@@ -119,6 +137,21 @@ int main(int argc, char* argv[])
 	  }
 	}
 	chgt_st = 0;
+	break;
+      case 1:
+	alter_events_select(&in, &gameover, &lv_int, &mod, &chgt_mod);
+	position.x = 250;
+	position.y = 250;
+	SDL_BlitSurface(lvsur[lv_int], NULL, screen, &position);
+	position.x = 650;
+	position.y = 250;
+	SDL_BlitSurface(rarrow, NULL, screen, &position);
+	position.x = 350;
+	position.y = 540;
+	SDL_BlitSurface(nb_sur[lv_int], NULL, screen, &position);
+	position.x = 430;
+	position.y = 540;
+	SDL_BlitSurface(nb_lev, NULL, screen, &position);
 	break;
       case 2:
 	alter_events_game(&in, &chgt_st, &gameover, &chgt_mod, &mouse_state,
@@ -137,7 +170,7 @@ int main(int argc, char* argv[])
 	if(chgt_st){
 	  switch(mouse_state){
 	  case 0:
-	    cnt = 11;
+	    cnt = NB_PIECES - 1;
 	    while(!mouse_state && cnt >= 0){
 	      if(p_l[cnt].posx + 20<=in.mousex && p_l[cnt].posx+80>=in.mousex &&
 		 p_l[cnt].posy + 20<=in.mousey && p_l[cnt].posy+80>=in.mousey){
@@ -160,13 +193,13 @@ int main(int argc, char* argv[])
 	switch(mouse_state){
 	case 0:
 	  placed = 0;
-	  for(int i=0; i < 12;i++){
+	  for(int i=0;i < NB_PIECES;i++){
 	    if(p_l[i].posx == p_l[i].endx
 	       && p_l[i].posy == p_l[i].endy){
 	      placed++;
 	    }
 	  }
-	  if(placed == 12){
+	  if(placed == NB_PIECES){
 	    mod = 3;
 	  }
 	  break;
@@ -189,7 +222,7 @@ int main(int argc, char* argv[])
 	default:
 	  break;
 	}
-	for(int k=0;k<12;k++){
+	for(int k=0;k<NB_PIECES;k++){
 	  apply_color(k,&red,&green,&blue);
 	  for(int i=0;i<5;i++){
 	    p_rect.y=p_l[k].posy + 20 * i;
@@ -229,7 +262,7 @@ int main(int argc, char* argv[])
 	    }
 	  }
 	}
-	for(int k=0;k<12;k++){
+	for(int k=0;k<NB_PIECES;k++){
 	  apply_color(k,&red,&green,&blue);
 	  for(int i=0;i<5;i++){
 	    p_rect.y=p_l[k].posy + 20 * i;
@@ -242,7 +275,7 @@ int main(int argc, char* argv[])
 	    }
 	  }
 	}
-	position.x = 45;
+	position.x = 10;
 	position.y = 280;
 	SDL_BlitSurface(cong, NULL, screen, &position);	
       default:
@@ -250,22 +283,16 @@ int main(int argc, char* argv[])
       }
       if(chgt_mod){
 	switch(mod){
-	case 0:
-	  switch(chgt_menu){
-	  case 1:
-	    txt = fopen("txt/cat.txt","r");
-	    p_l = (piece_t *)malloc(sizeof(piece_t) * 12);
-	    extract(txt, &form, p_l);
-	    fclose(txt);
-	    mod = 2;
-	    break;
-	  default:
-	    break;
-	  }
+	case 1:
+	  txt = fopen(lv.txt[lv_int],"r");
+	  p_l = (piece_t *)malloc(sizeof(piece_t) * NB_PIECES);
+	  extract(txt, &form, p_l);
+	  fclose(txt);
+	  mod = 2;
 	  break;
 	case 2:
 	case 3:
-	  for(int i=0;i<12;i++){
+	  for(int i=0;i<NB_PIECES;i++){
 	    for(int j=0;j<5;j++){
 	      free(p_l[i].shape[j]);
 	    }
@@ -297,10 +324,21 @@ int main(int argc, char* argv[])
   SDL_FreeSurface(sel11);
   SDL_FreeSurface(sel12);
   SDL_FreeSurface(sel13);
+  for(int i=0;i<NB_LEVELS;i++){
+    SDL_FreeSurface(lvsur[i]);
+  }
+  free(lvsur);
+  for(int i=0;i<NB_LEVELS;i++){
+    SDL_FreeSurface(nb_sur[i]);
+  }
+  free(nb_sur);
+  SDL_FreeSurface(nb_lev);
   SDL_FreeSurface(cong);
+  SDL_FreeSurface(rarrow);
   SDL_FreeSurface(screen);
   TTF_CloseFont(font_select);
   TTF_CloseFont(font_title);
+  TTF_CloseFont(font_lv);
   TTF_Quit();
   SDL_Quit();
   

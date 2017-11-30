@@ -33,6 +33,75 @@ void update_events(input_t* in)
   }
 }
 
+void init_level(level_t* lv)
+{
+  char lev[100], lvtxt[100];
+  for(int i=0;i < NB_LEVELS;i++){
+    switch(i){
+    case 0:
+      sprintf(lev, "<Airplane");
+      sprintf(lvtxt, "txt/airplane.txt");
+      break;
+    case 1:
+      sprintf(lev, "<Butterfly");
+      sprintf(lvtxt, "txt/butterfly.txt");
+      break;
+    case 2:
+      sprintf(lev, "<Cat");
+      sprintf(lvtxt, "txt/cat.txt");
+      break;
+    case 3:
+      sprintf(lev, "<Crocodile");
+      sprintf(lvtxt, "txt/crocodile.txt");
+      break;
+    case 4:
+      sprintf(lev, "<Cross");
+      sprintf(lvtxt, "txt/cross.txt");
+      break;
+    case 5:
+      sprintf(lev, "<Deer");
+      sprintf(lvtxt, "txt/deer.txt");
+      break;
+    case 6:
+      sprintf(lev, "<Duck");
+      sprintf(lvtxt, "txt/duck.txt");
+      break;
+    case 7:
+      sprintf(lev, "<Goose");
+      sprintf(lvtxt, "txt/goose.txt");
+      break;
+    case 8:
+      sprintf(lev, "<Kangaroo");
+      sprintf(lvtxt, "txt/kangaroo.txt");
+      break;
+    case 9:
+      sprintf(lev, "<Note");
+      sprintf(lvtxt, "txt/note.txt");
+      break;
+    case 10:
+      sprintf(lev, "<Rocket");
+      sprintf(lvtxt, "txt/rocket.txt");
+      break;
+    case 11:
+      sprintf(lev, "<Shovel");
+      sprintf(lvtxt, "txt/shovel.txt");
+      break;
+    case 12:
+      sprintf(lev, "<Teapot");
+      sprintf(lvtxt, "txt/teapot.txt");
+      break;
+    case 13:
+      sprintf(lev, "<Umbrella");
+      sprintf(lvtxt, "txt/umbrella.txt");
+      break;
+    default:
+      break;
+    }
+    strcpy(lv->level[i],lev);
+    strcpy(lv->txt[i],lvtxt);
+  }
+}
+
 void alter_events_menu(input_t* in, int *gameover, int *chgt_st)
 {
   if(in->quit || in->key[SDLK_ESCAPE]){
@@ -41,6 +110,30 @@ void alter_events_menu(input_t* in, int *gameover, int *chgt_st)
   if(in->mousebuttons[SDL_BUTTON_LEFT]){
     in->mousebuttons[SDL_BUTTON_LEFT] = 0;
     *chgt_st = 1;
+  }
+}
+
+void alter_events_select(input_t *in, int *gameover, int *lv_int,
+			 int *mod, int *chgt_mod)
+{
+  if(in->quit){
+    *gameover = 1;
+  }
+  if(in->key[SDLK_LEFT]){
+    in->key[SDLK_LEFT] = 0;
+    *lv_int = (*lv_int + NB_LEVELS - 1) % NB_LEVELS;
+  }
+  if(in->key[SDLK_RIGHT]){
+    in->key[SDLK_RIGHT] = 0;
+    *lv_int = (*lv_int + 1) % NB_LEVELS;
+  }
+  if(in->key[SDLK_ESCAPE]){
+    in->key[SDLK_ESCAPE] = 0;
+    *mod = 0;
+  }
+  if(in->key[SDLK_RETURN]){
+    in->key[SDLK_RETURN] = 0;
+    *chgt_mod = 1;
   }
 }
 
@@ -144,8 +237,10 @@ void alter_events_endgame(input_t* in, int *gameover, int *chgt_mod)
     *gameover = 1;
     *chgt_mod = 1;
   }
-  if(in->key[SDLK_ESCAPE] || in->mousebuttons[SDL_BUTTON_LEFT]){
+  if(in->key[SDLK_ESCAPE] || in->mousebuttons[SDL_BUTTON_LEFT] ||
+     in->key[SDLK_RETURN]){
     in->key[SDLK_ESCAPE] = 0;
+    in->key[SDLK_RETURN] = 0;
     in->mousebuttons[SDL_BUTTON_LEFT] = 0;
     *chgt_mod = 1;
   }
@@ -183,7 +278,7 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
     form->shape[i] = (char *)malloc(sizeof(char) * form->len);
     temp = fgets(form->shape[i],length,txt);
   }
-  for(i=0;i<12;i++){
+  for(i=0;i<NB_PIECES;i++){
     piec[i].shape = (char**)malloc(sizeof(char*) * 5);
     for(j=0;j<5;j++){
       piec[i].shape[j] = (char*)malloc(sizeof(char) * 5);
