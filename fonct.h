@@ -61,7 +61,9 @@ void alter_events_select(input_t *in, int *gameover, int *lv_int,
 
 void alter_events_game(input_t* in, int *chgt_st, int *gameover,
 		       int *chgt_mod, int *mouse_state, int *take,
-		       piece_t* piec, int *mod);
+		       piece_t* piec);
+
+void alter_events_credit(input_t *in, int *gameover, int *mod);
 
 void alter_events_endgame(input_t* in, int *gameover, int *chgt_mod);
 

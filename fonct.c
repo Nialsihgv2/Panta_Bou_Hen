@@ -28,13 +28,13 @@ void update_events(input_t* in)
       break;
     default:
       break;
-
     }
   }
 }
 
 void init_level(level_t* lv)
 {
+  /* List all level */
   char lev[100], lvtxt[100];
   for(int i=0;i < NB_LEVELS;i++){
     switch(i){
@@ -120,26 +120,30 @@ void alter_events_select(input_t *in, int *gameover, int *lv_int,
     *gameover = 1;
   }
   if(in->key[SDLK_LEFT]){
+    /* select level before */
     in->key[SDLK_LEFT] = 0;
     *lv_int = (*lv_int + NB_LEVELS - 1) % NB_LEVELS;
   }
   if(in->key[SDLK_RIGHT]){
+    /* select level after */
     in->key[SDLK_RIGHT] = 0;
     *lv_int = (*lv_int + 1) % NB_LEVELS;
   }
   if(in->key[SDLK_ESCAPE]){
     in->key[SDLK_ESCAPE] = 0;
+    /* go Title screen */
     *mod = 0;
   }
   if(in->key[SDLK_RETURN]){
     in->key[SDLK_RETURN] = 0;
+    /* prepare changement mod to Game mod */
     *chgt_mod = 1;
   }
 }
 
 void alter_events_game(input_t* in,int *chgt_st, int *gameover,
 		       int *chgt_mod, int *mouse_state, int *take,
-		       piece_t* piec, int *mod)
+		       piece_t* piec)
 {
   if(in->mousebuttons[SDL_BUTTON_LEFT]){
     in->mousebuttons[SDL_BUTTON_LEFT] = 0;
@@ -155,6 +159,8 @@ void alter_events_game(input_t* in,int *chgt_st, int *gameover,
   }
   switch(*mouse_state){
   case 0:
+    /* Take piece automaticaly with the right letter key if no either piece
+       not taken */
     if(in->key[SDLK_f]){
       in->key[SDLK_f] = 0;
       *mouse_state = 1;
@@ -217,6 +223,7 @@ void alter_events_game(input_t* in,int *chgt_st, int *gameover,
     }
     break;
   case 1:
+    /* replace piece taken at his original position */
     if(in->mousebuttons[SDL_BUTTON_RIGHT]){
       in->mousebuttons[SDL_BUTTON_RIGHT] = 0;
       *mouse_state = 0;
@@ -224,10 +231,6 @@ void alter_events_game(input_t* in,int *chgt_st, int *gameover,
       piec[*take].posy = piec[*take].sty;
     }
     break;
-  }
-  if(in->key[SDLK_m]){
-    in->key[SDLK_m] = 0;
-    *mod = 3;
   }
 }
 
@@ -246,11 +249,24 @@ void alter_events_endgame(input_t* in, int *gameover, int *chgt_mod)
   }
 }
 
+void alter_events_credit(input_t *in, int *gameover, int *mod)
+{
+  if(in->quit){
+    *gameover = 1;
+  }
+  if(in->key[SDLK_ESCAPE]){
+    in->key[SDLK_ESCAPE] = 0;
+    *mod = 0;
+  }
+}
+
 void extract(FILE *txt, grill_t *form, piece_t *piec)
 {
   char *temp, line[100];
   int length = 6;
   int i,j;
+  
+  /* init info on grill */
   for(i=0;i<4;i++){
     temp = fgets(line,length,txt);
     switch(i){
@@ -273,11 +289,15 @@ void extract(FILE *txt, grill_t *form, piece_t *piec)
       break;
     }
   }
+
+  /* extract shape from txt */
   form->shape = (char **)malloc(sizeof(char *) * form->hei);
   for(i=0;i<form->hei;i++){
     form->shape[i] = (char *)malloc(sizeof(char) * form->len);
     temp = fgets(form->shape[i],length,txt);
   }
+
+  /* init info from each piece and create shape */
   for(i=0;i<NB_PIECES;i++){
     piec[i].shape = (char**)malloc(sizeof(char*) * 5);
     for(j=0;j<5;j++){
